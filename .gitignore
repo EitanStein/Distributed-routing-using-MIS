@@ -1,0 +1,20 @@
+# Build files
+build.sh
+build/
+*.o
+*.obj
+*.exe
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.log
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+
+.vscode/
