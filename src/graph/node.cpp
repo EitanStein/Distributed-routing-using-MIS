@@ -7,12 +7,8 @@ void Node::AddEdge(node_id_t id, Node* neighbor)
     neighbors[id] = neighbor;
 }
 
-void Node::ReceiveMsg(node_id_t src_id, std::string_view msg)
-{
-    // TODO handle msg
-}
 
-void Node::SendMsg(node_id_t target_id, std::string_view msg) const
+void Node::SendMsg(node_id_t target_id, Message msg) const
 {
     auto target = neighbors.find(target_id);
     if(target == neighbors.end())
@@ -20,20 +16,28 @@ void Node::SendMsg(node_id_t target_id, std::string_view msg) const
         // TODO logger
         return;
     }
-    thread_pool->AddTask([this, target_ptr = target->second, msg](){
-        target_ptr->ReceiveMsg(this->id, msg);
+    thread_pool->AddTask([this, target_ptr = target->second, message = std::move(msg)](){
+        target_ptr->ReceiveMsg(this->id, std::move(message));
     });
 }
 
-void Node::Broadcast(std::string_view msg) const
+void Node::ReceiveMsg(node_id_t src_id, Message msg)
+{
+    inbox.ReceiveMsg(src_id ,std::move(msg));
+}
+
+void Node::Broadcast(Message msg) const
 {
     for(auto target : std::views::values(neighbors))
     {
         thread_pool->AddTask([this, target, msg](){
-            target->ReceiveMsg(this->id, msg);
+            target->ReceiveMsg(this->id, std::move(msg));
         });
     }
 }
 
 
-
+std::optional<std::pair<node_id_t, Message>> Node::ReadMsgFromInbox()
+{
+    return inbox.ReadMsg();
+}

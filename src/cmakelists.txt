@@ -1,6 +1,6 @@
-add_subdirectory(graph)
 add_subdirectory(messaging)
-add_subdirectory(simulation)
+add_subdirectory(graph)
+# add_subdirectory(simulation)
 add_subdirectory(utils)
 
 
@@ -12,5 +12,6 @@ target_link_libraries(MISDistributedRouting
     PRIVATE
         graph_module
         utils_module
+        messaging_module
         
 )

@@ -1,0 +1,8 @@
+add_library(messaging_module
+    inbox.cpp
+)
+
+target_include_directories(messaging_module
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+)
