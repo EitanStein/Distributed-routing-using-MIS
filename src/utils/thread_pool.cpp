@@ -3,12 +3,14 @@
 #include <ranges>
 
 
-ThreadPool::ThreadPool(size_t thread_pool_size)
+ThreadPool::ThreadPool(size_t thread_pool_size) : num_active_tasks(0)
 {
     threads.reserve(thread_pool_size);
     for(auto i : std::views::iota(size_t{0}, thread_pool_size))
     {
-        threads.emplace_back(&ThreadPool::ThreadLoop, this);
+        threads.emplace_back([this](std::stop_token stoken){ 
+            ThreadLoop(stoken); 
+        });
     }
 }
 
@@ -20,7 +22,7 @@ ThreadPool::~ThreadPool()
     {
         th.request_stop();
     }
-    cv.notify_all();
+    queue_cv.notify_all();
 }
 
 
@@ -37,9 +39,16 @@ void ThreadPool::AddTask(std::function<void()> task)
 {
     std::unique_lock<std::mutex> lock(queue_lock);
     task_queue.push(std::move(task));
-    cv.notify_one();
+    queue_cv.notify_one();
 }
 
+void ThreadPool::WaitForEmptyQueue()
+{
+    std::unique_lock<std::mutex> lock(queue_lock);
+    tasks_done_cv.wait(lock, [this](){
+        return this->task_queue.empty() && num_active_tasks == 0;
+    });
+}
 
 void ThreadPool::ThreadLoop(std::stop_token stoken)
 {
@@ -48,17 +57,26 @@ void ThreadPool::ThreadLoop(std::stop_token stoken)
         std::function<void()> task;
         {
             std::unique_lock<std::mutex> lock(queue_lock);
-            cv.wait(lock, [this, &stoken](){
+            queue_cv.wait(lock, [this, &stoken](){
                 return stoken.stop_requested() || !this->task_queue.empty();
             });
             
             if (stoken.stop_requested())
                 return;
 
+            ++num_active_tasks;
             task = std::move(task_queue.front());
             task_queue.pop();
             
         }
         task();
+
+        {
+            --num_active_tasks;
+            std::unique_lock<std::mutex> lock(queue_lock);
+            if(task_queue.empty() && num_active_tasks == 0)
+                tasks_done_cv.notify_all();
+        }
+
     }
 }
