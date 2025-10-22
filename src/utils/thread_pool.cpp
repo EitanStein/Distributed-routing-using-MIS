@@ -19,9 +19,8 @@ ThreadPool::ThreadPool(size_t thread_pool_size) : num_active_tasks(0)
 ThreadPool::~ThreadPool()
 {
     for(auto& th : threads)
-    {
         th.request_stop();
-    }
+    
     queue_cv.notify_all();
 }
 
