@@ -1,0 +1,9 @@
+add_library(graph_module
+    graph.cpp
+    node.cpp
+)
+
+target_include_directories(graph_module
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+)

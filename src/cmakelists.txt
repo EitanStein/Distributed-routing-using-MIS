@@ -1,0 +1,16 @@
+add_subdirectory(graph)
+add_subdirectory(messaging)
+add_subdirectory(simulation)
+add_subdirectory(utils)
+
+
+
+add_executable(MISDistributedRouting main.cpp)
+
+
+target_link_libraries(MISDistributedRouting
+    PRIVATE
+        graph_module
+        utils_module
+        
+)

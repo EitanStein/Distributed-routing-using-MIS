@@ -1,0 +1,8 @@
+add_library(utils_module
+    thread_pool.cpp
+)
+
+target_include_directories(utils_module
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+)
