@@ -2,9 +2,9 @@
 #include "MISDistributedRouting/graph/node.h"
 #include <ranges>
 
-void Node::AddEdge(node_id_t id, Node* neighbor)
+void Node::AddEdge(Node* other)
 {
-    neighbors[id] = neighbor;
+    neighbors[other->GetID()] = other;
 }
 
 

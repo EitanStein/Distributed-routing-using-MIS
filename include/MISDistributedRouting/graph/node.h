@@ -18,12 +18,14 @@ private:
 
 public:
     Node(node_id_t id, ThreadPool* pool) : id(id), thread_pool(pool) {}
-    void AddEdge(node_id_t id, Node* neighbor);
+    void AddEdge(Node* neighbor);
 
     void SendMsg(node_id_t dest_id, Message msg) const;
     void ReceiveMsg(node_id_t from_id, Message msg);
     std::optional<std::pair<node_id_t, Message>> ReadMsgFromInbox();
     void Broadcast(Message msg) const;
+
+    node_id_t GetID() const { return id; }
 
     ~Node() = default;
 
