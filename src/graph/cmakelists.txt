@@ -3,6 +3,11 @@ add_library(graph_module
     node.cpp
 )
 
+target_link_libraries(graph_module
+    PRIVATE
+        spdlog::spdlog
+)
+
 target_include_directories(graph_module
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../../include

@@ -12,6 +12,7 @@ target_link_libraries(MISDistributedRouting
     PRIVATE
         graph_module
         utils_module
+        logging_module
         messaging_module
-        
+        spdlog::spdlog   
 )
