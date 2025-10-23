@@ -10,6 +10,9 @@ build/
 Thumbs.db
 *.log
 
+# Logger output
+logs.txt
+
 # CMake generated files
 CMakeFiles/
 CMakeCache.txt
