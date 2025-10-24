@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <optional>
 
-#include "MISDistributedRouting/utils/types.h"
+#include "types.h"
 #include "MISDistributedRouting/utils/thread_pool.h"
 #include "inbox.h"
 
