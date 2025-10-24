@@ -4,6 +4,7 @@
 #include <variant>
 #include <concepts>
 #include <type_traits>
+#include <optional>
 
 #include "MISDistributedRouting/utils/types.h"
 

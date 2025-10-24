@@ -1,5 +1,4 @@
-add_subdirectory(messaging)
-add_subdirectory(graph)
+add_subdirectory(core)
 # add_subdirectory(simulation)
 add_subdirectory(utils)
 
@@ -10,9 +9,8 @@ add_executable(MISDistributedRouting main.cpp)
 
 target_link_libraries(MISDistributedRouting
     PRIVATE
-        graph_module
+        core_module
         utils_module
         logging_module
-        messaging_module
         spdlog::spdlog   
 )

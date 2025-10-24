@@ -1,14 +1,15 @@
-add_library(graph_module
+add_library(core_module
     graph.cpp
     node.cpp
+    inbox.cpp
 )
 
-target_link_libraries(graph_module
+target_link_libraries(core_module
     PRIVATE
         spdlog::spdlog
 )
 
-target_include_directories(graph_module
+target_include_directories(core_module
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../../include
 )

@@ -1,5 +1,5 @@
 
-#include "MISDistributedRouting/graph/node.h"
+#include "MISDistributedRouting/core/node.h"
 #include <ranges>
 
 void Node::AddEdge(Node* other)

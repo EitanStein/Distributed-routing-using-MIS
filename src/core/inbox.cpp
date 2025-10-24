@@ -1,4 +1,4 @@
-#include "MISDistributedRouting/messaging/inbox.h"
+#include "MISDistributedRouting/core/inbox.h"
 
 void Inbox::ReceiveMsg(node_id_t src, Message msg)
 {

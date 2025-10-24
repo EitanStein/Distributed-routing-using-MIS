@@ -5,7 +5,7 @@
 
 #include "MISDistributedRouting/utils/types.h"
 #include "MISDistributedRouting/utils/thread_pool.h"
-#include "MISDistributedRouting/messaging/inbox.h"
+#include "inbox.h"
 
 
 class Node
