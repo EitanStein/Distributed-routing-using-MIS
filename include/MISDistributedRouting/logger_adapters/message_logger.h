@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MISDistributedRouting/utils/log_macros.h"
-#include "MISDistributedRouting/messaging/message.h"
+#include "MISDistributedRouting/core/message.h"
 
 inline void LogInfoMessage(const Message& msg)
 {
