@@ -44,30 +44,43 @@ void MIS_Node::HandleMISBuildingMsg(node_id_t sender, Message msg)
     }
 }
 
-// TODO fix HandleRegularMsg + ForwardMsg
-// std::optional<Message> MIS_Node::HandleRegularMsg(Message msg) const
-// {
-//     if(!msg.recipient.has_value())
-//         return std::nullopt;
+std::optional<Message> MIS_Node::HandleRegularMsg(Message msg) const
+{
+    if(!msg.recipient.has_value())
+    {
+        // TODO log error - recipient is unllopt
+        return std::nullopt;
+    }
 
-//     if(id == msg.recipient.value())
-//         return msg;
-//     else
-//         path_table_to_MIS_nodes[msg.router_to_recipient.value()]->ReceiveMsg(id, std::move(msg));
+    node_id_t msg_recipient = msg.recipient.value();
+    if(msg_recipient == id)
+        return msg;
+
+    if(!msg.router_to_recipient.has_value())
+    {
+        // TODO log error - router_to_recipient is nullopt
+        return std::nullopt;
+    }
+
+    node_id_t recipient_MIS_node = msg.router_to_recipient.value();
+    if(recipient_MIS_node == id)
+    {
+        neighbors.at(msg_recipient)->ReceiveMsg(id, std::move(msg));
+        return std::nullopt;
+    }
+
+    if(path_table_to_MIS_nodes.contains(recipient_MIS_node))
+    {
+        MIS_Node* mis_node_ptr = path_table_to_MIS_nodes.at(recipient_MIS_node);
+        mis_node_ptr->ReceiveMsg(id, std::move(msg));
+    }
+    else
+    {
+        // TODO log error - target node not in path_table_to_MIS_nodes
+    }
     
-//     return std::nullopt;
-// }
-
-// void MIS_Node::ForwardMsg(Message msg) const
-// {
-//     if(!msg.recipient.has_value())
-//         return; // TODO logging
-
-//     if(id == msg.router_to_recipient.value())
-//         neighbors[msg.recipient.value()]->ReceiveMsg(id, std::move(msg));
-//     else
-//         path_table_to_MIS_nodes[msg.router_to_recipient.value()]->ReceiveMsg(id, std::move(msg));
-// }
+    return std::nullopt;
+}
 
 void MIS_Node::MISBroadcast()
 {
