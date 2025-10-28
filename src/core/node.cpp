@@ -1,5 +1,6 @@
 
 #include "MISDistributedRouting/core/node.h"
+
 #include <ranges>
 
 void Node::AddEdge(Node* other)
@@ -40,4 +41,18 @@ void Node::Broadcast(Message msg) const
 std::optional<std::pair<node_id_t, Message>> Node::ReadMsgFromInbox()
 {
     return inbox.ReadMsg();
+}
+
+void Node::HandleAllInboxMessages(std::function<void(node_id_t, Message)> func)
+{
+    auto optional_msg = std::move(ReadMsgFromInbox());
+
+    while(optional_msg.has_value())
+    {
+        auto [src, msg] = std::move(optional_msg.value());
+
+        func(src, std::move(msg));
+
+        optional_msg = std::move(ReadMsgFromInbox());
+    }
 }

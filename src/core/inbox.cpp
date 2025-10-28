@@ -19,6 +19,13 @@ std::optional<std::pair<node_id_t, Message>> Inbox::ReadMsg()
 
 }
 
+void Inbox::EmptyInbox()
+{
+    std::unique_lock<std::mutex> lock(queue_mutex);
+    std::queue<std::pair<node_id_t, Message>> empty_queue;
+    queue.swap(empty_queue);
+}
+
 bool Inbox::IsEmpty()
 {
     std::unique_lock<std::mutex> lock(queue_mutex);
