@@ -1,5 +1,0 @@
-
-target_include_directories(simulation_module
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../include
-)

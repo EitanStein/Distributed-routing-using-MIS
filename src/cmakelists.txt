@@ -1,5 +1,5 @@
 add_subdirectory(core)
-# add_subdirectory(simulation)
+add_subdirectory(algorithm)
 add_subdirectory(utils)
 
 
@@ -12,5 +12,6 @@ target_link_libraries(MISDistributedRouting
         core_module
         utils_module
         logging_module
+        MIS_algo_module
         spdlog::spdlog   
 )

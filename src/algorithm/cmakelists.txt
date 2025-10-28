@@ -1,0 +1,14 @@
+add_library(MIS_algo_module
+    MIS_graph.cpp
+    MIS_node.cpp
+)
+
+target_link_libraries(MIS_algo_module
+    PRIVATE
+        spdlog::spdlog
+)
+
+target_include_directories(MIS_algo_module
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+)
