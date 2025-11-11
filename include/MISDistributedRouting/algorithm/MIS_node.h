@@ -8,15 +8,15 @@
 
 class MIS_Node : public Node {
 private:
+    std::mt19937 rng;
+protected:
     double rand_num;
     bool is_MIS;
     MIS_Node* my_MIS;
 
-    std::mt19937 rng;
-
     std::unordered_map<node_id_t, MIS_Node*> active_MIS_building_neighbors;
     
-    std::unordered_map<node_id_t, MIS_Node*> path_table_to_MIS_nodes; // use map from node_id_t to node_id_t instead?
+    std::unordered_map<node_id_t, MIS_Node*> path_table_to_MIS_nodes; // TODO use map from node_id_t to node_id_t instead?
     std::unordered_set<node_id_t> new_entries_to_path_table;
 public:
     MIS_Node(node_id_t id, ThreadPool* pool) : Node(id, pool), is_MIS(false), my_MIS(nullptr), rand_num(0), rng(std::random_device{}()) {}
