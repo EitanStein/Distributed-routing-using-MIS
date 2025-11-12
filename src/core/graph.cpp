@@ -7,6 +7,7 @@
 void Graph::InitGraphNodes(size_t graph_size)
 {
     nodes.clear();
+    this->graph_size = 0;
 
     nodes.reserve(graph_size);
     for(auto i : std::views::iota(size_t{0}, graph_size))
@@ -39,6 +40,7 @@ void Graph::InitRandEdges(size_t num_edges)
 void Graph::AddNode()
 {
     nodes.emplace_back(std::make_unique<Node>(nodes.size(), &thread_pool));
+    ++graph_size;
 }
 
 void Graph::AddEdge(node_id_t node1, node_id_t node2)

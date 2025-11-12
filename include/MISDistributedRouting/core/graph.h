@@ -16,7 +16,7 @@ protected:
 
     void RunTaskOnAllNodes(std::function<void(node_id_t)> task, bool wait=true);
 public:
-    Graph(size_t thread_pool_size=DEFAULT_POOL_SIZE) : thread_pool(thread_pool_size) {};
+    Graph(size_t thread_pool_size=DEFAULT_POOL_SIZE) : thread_pool(thread_pool_size), graph_size(0) {};
 
     void InitGraphNodes(size_t graph_size);
     void InitRandEdges(size_t num_edges);
