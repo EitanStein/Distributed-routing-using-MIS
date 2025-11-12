@@ -7,7 +7,6 @@
 void Graph::InitGraphNodes(size_t graph_size)
 {
     nodes.clear();
-    this->graph_size = 0;
 
     nodes.reserve(graph_size);
     for(auto i : std::views::iota(size_t{0}, graph_size))
@@ -16,6 +15,7 @@ void Graph::InitGraphNodes(size_t graph_size)
 
 void Graph::InitRandEdges(size_t num_edges)
 {
+    size_t graph_size = GetGraphSize();
     size_t num_max_edges = graph_size*(graph_size - 1)/2;
     if(num_edges > num_max_edges)
         num_edges = num_max_edges;
@@ -40,7 +40,6 @@ void Graph::InitRandEdges(size_t num_edges)
 void Graph::AddNode()
 {
     nodes.emplace_back(std::make_unique<Node>(nodes.size(), &thread_pool));
-    ++graph_size;
 }
 
 void Graph::AddEdge(node_id_t node1, node_id_t node2)
@@ -51,6 +50,7 @@ void Graph::AddEdge(node_id_t node1, node_id_t node2)
 
 void Graph::RunTaskOnAllNodes(std::function<void(node_id_t)> task, bool wait)
 {
+    size_t graph_size = GetGraphSize();
     for(node_id_t id=0; id < graph_size ; ++id)
     {
         thread_pool.AddTask([id, task](){

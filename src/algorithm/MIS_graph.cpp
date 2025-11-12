@@ -5,17 +5,11 @@
 void MIS_Graph::AddNode()
 {
     nodes.emplace_back(std::make_unique<MIS_Node>(nodes.size(), &thread_pool));
-    ++graph_size;
-}
-
-void MIS_Graph::AddEdge(node_id_t node1, node_id_t node2)
-{
-    static_cast<MIS_Node*>(nodes[node1].get())->AddEdge(nodes[node2].get());
-    static_cast<MIS_Node*>(nodes[node2].get())->AddEdge(nodes[node1].get());
 }
 
 void MIS_Graph::BuildMIS()
 {
+    size_t graph_size = GetGraphSize();
     size_t num_iterations = 10*(size_t)log2(graph_size);
 
     for(auto i : std::views::iota(size_t{0}, num_iterations))

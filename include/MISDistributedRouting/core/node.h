@@ -19,7 +19,7 @@ protected:
 
 public:
     Node(node_id_t id, ThreadPool* pool) : id(id), thread_pool(pool) {}
-    void AddEdge(Node* neighbor);
+    virtual void AddEdge(Node* neighbor);
 
     void SendMsg(node_id_t dest_id, Message msg) const;
     void ReceiveMsg(node_id_t from_id, Message msg);

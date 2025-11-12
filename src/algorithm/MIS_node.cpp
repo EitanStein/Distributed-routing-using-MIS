@@ -5,7 +5,7 @@
 
 void MIS_Node::AddEdge(Node* other)
 {
-    neighbors[other->GetID()] = other;
+    Node::AddEdge(other);
     active_MIS_building_neighbors[other->GetID()] = static_cast<MIS_Node*>(other);
 }
 

@@ -24,7 +24,7 @@ public:
     MIS_Node(node_id_t id, ThreadPool* pool) : Node(id, pool), is_MIS(false), my_MIS(nullptr), rand_num(0), rng(std::random_device{}()) {}
     ~MIS_Node() = default;
 
-    void AddEdge(Node* other);
+    void AddEdge(Node* other) override;
 
     void ForwardMsg(Message msg) const;
 
