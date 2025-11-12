@@ -1,0 +1,14 @@
+add_library(simulation_module
+    simulation_graph.cpp
+    simulation_node.cpp
+)
+
+target_link_libraries(simulation_module
+    PRIVATE
+        spdlog::spdlog
+)
+
+target_include_directories(simulation_module
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+)
