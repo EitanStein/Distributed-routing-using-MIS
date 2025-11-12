@@ -2,17 +2,6 @@
 
 #include <ranges>
 
-
-MIS_Graph::MIS_Graph(size_t graph_size, size_t num_edges, size_t thread_pool_size) : Graph(thread_pool_size)
-{
-    this->graph_size = graph_size;
-    nodes.reserve(graph_size);
-    for(auto i : std::views::iota(size_t{0}, graph_size))
-        AddNode();
-
-    AddRandEdges(num_edges);
-}
-
 void MIS_Graph::AddNode()
 {
     nodes.emplace_back(std::make_unique<MIS_Node>(nodes.size(), &thread_pool));
@@ -79,4 +68,11 @@ void MIS_Graph::BuildPathTable()
             static_cast<MIS_Node*>(nodes[id].get())->PostPathTableBroadacst();
         });
     }
+}
+
+
+void MIS_Graph::InitMIS()
+{
+    BuildMIS();
+    BuildPathTable();
 }

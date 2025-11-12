@@ -4,16 +4,16 @@
 #include <random>
 #include <iterator>
 
-Graph::Graph(size_t graph_size, size_t num_edges, size_t thread_pool_size) : thread_pool(thread_pool_size), graph_size(graph_size)
+void Graph::InitGraphNodes(size_t graph_size)
 {
+    nodes.clear();
+
     nodes.reserve(graph_size);
     for(auto i : std::views::iota(size_t{0}, graph_size))
         AddNode();
-
-    AddRandEdges(num_edges);
 }
 
-void Graph::AddRandEdges(size_t num_edges)
+void Graph::InitRandEdges(size_t num_edges)
 {
     size_t num_max_edges = graph_size*(graph_size - 1)/2;
     if(num_edges > num_max_edges)
