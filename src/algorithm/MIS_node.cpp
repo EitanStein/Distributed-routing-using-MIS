@@ -82,6 +82,13 @@ std::optional<Message> MIS_Node::HandleRegularMsg(Message msg) const
     return std::nullopt;
 }
 
+double MIS_Node::GetRandNumber(double min_val, double max_val)
+{
+    std::uniform_real_distribution<> distrib(min_val, max_val); 
+
+    return distrib(rng);
+}
+
 void MIS_Node::MISBroadcast()
 {
     if (my_MIS != nullptr)
@@ -90,9 +97,7 @@ void MIS_Node::MISBroadcast()
         return;
     }
 
-    std::uniform_real_distribution<> distrib(0, 1); 
-
-    rand_num = distrib(rng);
+    rand_num = GetRandNumber();    
 
     MISBuildingBroadcast(Message(rand_num));
 }
