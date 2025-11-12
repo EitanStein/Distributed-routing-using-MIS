@@ -1,6 +1,5 @@
 add_library(simulation_module
     simulation_graph.cpp
-    simulation_node.cpp
 )
 
 target_link_libraries(simulation_module
