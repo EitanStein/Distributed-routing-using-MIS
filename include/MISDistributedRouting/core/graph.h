@@ -17,8 +17,8 @@ protected:
 public:
     Graph(size_t thread_pool_size=DEFAULT_POOL_SIZE) : thread_pool(thread_pool_size) {};
 
-    void InitGraphNodes(size_t graph_size);
-    void InitRandEdges(size_t num_edges);
+    virtual void InitGraphNodes(size_t graph_size);
+
     size_t GetGraphSize() const { return nodes.size(); }
 
     virtual void AddNode();
