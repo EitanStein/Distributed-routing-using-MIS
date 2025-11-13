@@ -27,25 +27,22 @@ MessagerNode* MessagerNode::GetNeighbor(node_id_t id) const
 }
 
 
-void MessagerNode::SendMsg(node_id_t target_id, Message msg) const
+void MessagerNode::AddOutboxMsg(node_id_t target_id, Message msg)
 {
-    MessagerNode* target_ptr = GetNeighbor(target_id);
-    thread_pool->AddTask([this, target_ptr, message = std::move(msg)](){
-        target_ptr->ReceiveMsg(this->id, std::move(message));
-    });
+    outbox.AddMsg(target_id, std::move(msg));
 }
 
-void MessagerNode::ReceiveMsg(node_id_t src_id, Message msg)
+void MessagerNode::AddInboxMsg(node_id_t src_id, Message msg)
 {
-    inbox.ReceiveMsg(src_id ,std::move(msg));
+    inbox.AddMsg(src_id, std::move(msg));
 }
 
-void MessagerNode::Broadcast(Message msg) const
+void MessagerNode::Broadcast(Message msg)
 {
-    for(auto target : std::views::values(neighbors))
+    for(auto target : std::views::keys(neighbors))
     {
         thread_pool->AddTask([this, target, msg](){
-            static_cast<MessagerNode*>(target)->ReceiveMsg(this->id, std::move(msg));
+            AddOutboxMsg(target, std::move(msg));
         });
     }
 }
@@ -53,19 +50,29 @@ void MessagerNode::Broadcast(Message msg) const
 
 std::optional<std::pair<node_id_t, Message>> MessagerNode::ReadMsgFromInbox()
 {
-    return inbox.ReadMsg();
+    return inbox.PopMsg();
 }
 
 void MessagerNode::HandleAllInboxMessages(std::function<void(node_id_t, Message)> func)
 {
-    auto optional_msg = std::move(ReadMsgFromInbox());
-
-    while(optional_msg.has_value())
+    while(std::optional<std::pair<node_id_t, Message>> optional_msg = inbox.PopMsg()) // TODO check that move works here
     {
         auto [src, msg] = std::move(optional_msg.value());
 
         func(src, std::move(msg));
-
-        optional_msg = std::move(ReadMsgFromInbox());
     }
+}
+
+
+void MessagerNode::SendAllOutboxMessages()
+{
+    while(std::optional<std::pair<node_id_t, Message>> optional_msg = outbox.PopMsg()) // TODO check that move works here
+    {
+        auto [target, msg] = std::move(*optional_msg);
+        MessagerNode* target_ptr = GetNeighbor(target);
+        thread_pool->AddTask([this, target_ptr, message = std::move(msg)](){
+            target_ptr->AddInboxMsg(this->id, std::move(message));
+        });
+    }
+    
 }

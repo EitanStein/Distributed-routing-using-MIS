@@ -16,6 +16,12 @@ void SimulationGraph::AddNode()
 }
 
 
+SimulationNode* SimulationGraph::GetNode(node_id_t id) const
+{
+    return static_cast<SimulationNode*>(Graph::GetNode(id));
+}
+
+
 void SimulationGraph::AddEdge(node_id_t node1, node_id_t node2)
 {
     MIS_Graph::AddEdge(node1, node2);
