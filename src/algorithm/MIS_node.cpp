@@ -1,4 +1,5 @@
 #include "MISDistributedRouting/algorithm/MIS_node.h"
+#include "MISDistributedRouting/utils/log_macros.h"
 
 #include <ranges>
 
@@ -54,7 +55,7 @@ std::optional<Message> MIS_Node::HandleRegularMsg(Message msg)
 {
     if(!msg.recipient.has_value())
     {
-        // TODO log error - recipient is unllopt
+        LOG_ERROR("regular message recipient is nullopt");
         return std::nullopt;
     }
 
@@ -64,7 +65,7 @@ std::optional<Message> MIS_Node::HandleRegularMsg(Message msg)
 
     if(!msg.router_to_recipient.has_value())
     {
-        // TODO log error - router_to_recipient is nullopt
+        LOG_ERROR("regular message router-to-recipient is nullopt");
         return std::nullopt;
     }
 
@@ -82,7 +83,7 @@ std::optional<Message> MIS_Node::HandleRegularMsg(Message msg)
     }
     else
     {
-        // TODO log error - target node not in path_table_to_MIS_nodes
+        LOG_ERROR("regular message - target ({}) MIS node ({}) is not in path table", recipient_MIS_node, msg_recipient);
     }
     
     return std::nullopt;

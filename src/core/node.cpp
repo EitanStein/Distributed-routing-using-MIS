@@ -1,5 +1,6 @@
 
 #include "MISDistributedRouting/core/node.h"
+#include "MISDistributedRouting/utils/log_macros.h"
 
 #include <ranges>
 
@@ -13,7 +14,7 @@ Node* Node::GetNeighbor(node_id_t id) const
     auto target = neighbors.find(id);
     if(target == neighbors.end())
     {
-        // TODO logger didnt find neighbor
+        LOG_ERROR("node {} does not have a neighbor {}", this->id, id);
         return nullptr;
     }
 

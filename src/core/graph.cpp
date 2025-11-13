@@ -1,4 +1,5 @@
 #include "MISDistributedRouting/core/graph.h"
+#include "MISDistributedRouting/utils/log_macros.h"
 
 #include <ranges>
 #include <random>
@@ -28,7 +29,7 @@ Node* Graph::GetNode(node_id_t node_id) const
 {
     if(node_id >= GetGraphSize())
     {
-        // TODO logger didnt find neighbor
+        LOG_ERROR("node id {} is larger than graph size", node_id);
         return nullptr;
     }
 
