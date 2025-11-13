@@ -17,4 +17,6 @@ public:
     void AddNode() override;
 
     void InitMIS();
+
+    MIS_Node* GetNode(node_id_t) const override;
 };

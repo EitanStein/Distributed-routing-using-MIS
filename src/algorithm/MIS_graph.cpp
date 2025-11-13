@@ -7,6 +7,11 @@ void MIS_Graph::AddNode()
     nodes.emplace_back(std::make_unique<MIS_Node>(nodes.size(), &thread_pool));
 }
 
+MIS_Node* MIS_Graph::GetNode(node_id_t node_id) const
+{
+    return static_cast<MIS_Node*>(Graph::GetNode(node_id));
+}
+
 void MIS_Graph::BuildMIS()
 {
     size_t graph_size = GetGraphSize();
@@ -15,19 +20,23 @@ void MIS_Graph::BuildMIS()
     for(auto i : std::views::iota(size_t{0}, num_iterations))
     {
         RunTaskOnAllNodes([this](node_id_t id){
-            static_cast<MIS_Node*>(nodes[id].get())->MISBroadcast();
+            GetNode(id)->MISBroadcast();
+        });
+
+        TransferPendingMessages();
+
+        RunTaskOnAllNodes([this](node_id_t id){
+            GetNode(id)->PostMISBroadacst();
         });
 
         RunTaskOnAllNodes([this](node_id_t id){
-            static_cast<MIS_Node*>(nodes[id].get())->PostMISBroadacst();
+            GetNode(id)->BroadcastMISStatus();
         });
 
-        RunTaskOnAllNodes([this](node_id_t id){
-            static_cast<MIS_Node*>(nodes[id].get())->BroadcastMISStatus();
-        });
+        TransferPendingMessages();
 
         RunTaskOnAllNodes([this](node_id_t id){
-            static_cast<MIS_Node*>(nodes[id].get())->PostMISStatusBroadacst();
+            GetNode(id)->PostMISStatusBroadacst();
         });
     }
 }
@@ -36,7 +45,7 @@ bool MIS_Graph::IsPathTableDone() const
 {
     for(node_id_t id=0; id < nodes.size() ; ++id)
     {
-        if (static_cast<MIS_Node*>(nodes[id].get())->IsNewPathTableEntriesEmpty() == false)
+        if (GetNode(id)->IsNewPathTableEntriesEmpty() == false)
             return false;
     }
 
@@ -46,21 +55,25 @@ bool MIS_Graph::IsPathTableDone() const
 void MIS_Graph::BuildPathTable()
 {
     RunTaskOnAllNodes([this](node_id_t id){
-        static_cast<MIS_Node*>(nodes[id].get())->BuildPathTableBroadacstStart();
+        GetNode(id)->BuildPathTableBroadacstStart();
     });
 
+    TransferPendingMessages();
+
     RunTaskOnAllNodes([this](node_id_t id){
-        static_cast<MIS_Node*>(nodes[id].get())->PostPathTableBroadacst();
+        GetNode(id)->PostPathTableBroadacst();
     });
 
     while(!IsPathTableDone())
     {
         RunTaskOnAllNodes([this](node_id_t id){
-            static_cast<MIS_Node*>(nodes[id].get())->BuildPathTableBroadacst();
+            GetNode(id)->BuildPathTableBroadacst();
         });
 
+        TransferPendingMessages();
+
         RunTaskOnAllNodes([this](node_id_t id){
-            static_cast<MIS_Node*>(nodes[id].get())->PostPathTableBroadacst();
+            GetNode(id)->PostPathTableBroadacst();
         });
     }
 }

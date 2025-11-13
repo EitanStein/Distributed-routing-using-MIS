@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "MISDistributedRouting/utils/thread_pool.h"
-#include "inbox.h"
+#include "message_box.h"
 
 
 class Node
@@ -29,16 +29,20 @@ class MessagerNode : public Node
 {
 protected:
     ThreadPool* thread_pool;
-    Inbox inbox;
+    MessageBox inbox;
+    MessageBox outbox;
 public:
     MessagerNode(node_id_t id, ThreadPool* pool) : Node(id), thread_pool(pool) {}
     ~MessagerNode() = default;
 
     MessagerNode* GetNeighbor(node_id_t id) const override;
 
-    void SendMsg(node_id_t dest_id, Message msg) const;
-    void ReceiveMsg(node_id_t from_id, Message msg);
+    
+    void AddInboxMsg(node_id_t from_id, Message msg);
     std::optional<std::pair<node_id_t, Message>> ReadMsgFromInbox();
     void HandleAllInboxMessages(std::function<void(node_id_t, Message)>);
-    void Broadcast(Message msg) const;
+
+    void AddOutboxMsg(node_id_t dest_id, Message msg);
+    void Broadcast(Message msg);
+    void SendAllOutboxMessages();
 };

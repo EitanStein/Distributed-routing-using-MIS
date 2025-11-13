@@ -15,12 +15,12 @@ MIS_Node* MIS_Node::GetNeighbor(node_id_t id) const
     return static_cast<MIS_Node*>(Node::GetNeighbor(id));
 }
 
-void MIS_Node::MISBuildingBroadcast(Message msg) const
+void MIS_Node::MISBuildingBroadcast(Message msg)
 {
-    for(auto target : std::views::values(active_MIS_building_neighbors))
+    for(auto target : std::views::keys(active_MIS_building_neighbors))
     {
         thread_pool->AddTask([this, target, msg](){
-            target->ReceiveMsg(id, std::move(msg));
+            AddOutboxMsg(target, std::move(msg));
         });
     }
 }
@@ -50,7 +50,7 @@ void MIS_Node::HandleMISBuildingMsg(node_id_t sender, Message msg)
     }
 }
 
-std::optional<Message> MIS_Node::HandleRegularMsg(Message msg) const
+std::optional<Message> MIS_Node::HandleRegularMsg(Message msg)
 {
     if(!msg.recipient.has_value())
     {
@@ -71,14 +71,14 @@ std::optional<Message> MIS_Node::HandleRegularMsg(Message msg) const
     node_id_t recipient_MIS_node = msg.router_to_recipient.value();
     if(recipient_MIS_node == id)
     {
-        neighbors.at(msg_recipient)->ReceiveMsg(id, std::move(msg));
+        AddOutboxMsg(msg_recipient, std::move(msg));
         return std::nullopt;
     }
 
     if(path_table_to_MIS_nodes.contains(recipient_MIS_node))
     {
         MIS_Node* mis_node_ptr = path_table_to_MIS_nodes.at(recipient_MIS_node);
-        mis_node_ptr->ReceiveMsg(id, std::move(msg));
+        AddOutboxMsg(mis_node_ptr->GetID(), std::move(msg));
     }
     else
     {
@@ -112,7 +112,7 @@ void MIS_Node::PostMISBroadacst()
 {
     if(my_MIS != nullptr)
     {
-        inbox.EmptyInbox();
+        inbox.Clear();
         return;
     }
 
@@ -140,7 +140,7 @@ void MIS_Node::PostMISStatusBroadacst()
 {
     if(my_MIS != nullptr)
     {
-        inbox.EmptyInbox();
+        inbox.Clear();
         return;
     }
 
@@ -151,7 +151,7 @@ void MIS_Node::PostMISStatusBroadacst()
 
 
 
-void MIS_Node::BuildPathTableBroadacstStart() const
+void MIS_Node::BuildPathTableBroadacstStart()
 {
     if(is_MIS == false)
         return;
@@ -160,7 +160,7 @@ void MIS_Node::BuildPathTableBroadacstStart() const
 }
 
 
-void MIS_Node::BuildPathTableBroadacst() const
+void MIS_Node::BuildPathTableBroadacst()
 {
     for(node_id_t MIS_id : new_entries_to_path_table)
         Broadcast(Message(MIS_id));

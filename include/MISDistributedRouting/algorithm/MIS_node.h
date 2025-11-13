@@ -29,9 +29,9 @@ public:
 
     MIS_Node* GetNeighbor(node_id_t id) const override;
 
-    std::optional<Message> HandleRegularMsg(Message msg) const;
+    std::optional<Message> HandleRegularMsg(Message msg);
 
-    void MISBuildingBroadcast(Message msg) const;
+    void MISBuildingBroadcast(Message msg);
     void HandleMISBuildingMsg(node_id_t sender, Message msg);
 
     void MISBroadcast();
@@ -39,8 +39,8 @@ public:
     void BroadcastMISStatus();
     void PostMISStatusBroadacst();
 
-    void BuildPathTableBroadacstStart() const;
-    void BuildPathTableBroadacst() const;
+    void BuildPathTableBroadacstStart();
+    void BuildPathTableBroadacst();
     void PostPathTableBroadacst();
     bool IsNewPathTableEntriesEmpty() const;
 

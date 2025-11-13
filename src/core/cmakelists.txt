@@ -1,7 +1,7 @@
 add_library(core_module
     graph.cpp
     node.cpp
-    inbox.cpp
+    message_box.cpp
 )
 
 target_link_libraries(core_module
