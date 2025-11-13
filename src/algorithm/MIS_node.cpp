@@ -9,6 +9,12 @@ void MIS_Node::AddEdge(Node* other)
     active_MIS_building_neighbors[other->GetID()] = static_cast<MIS_Node*>(other);
 }
 
+
+MIS_Node* MIS_Node::GetNeighbor(node_id_t id) const
+{
+    return static_cast<MIS_Node*>(Node::GetNeighbor(id));
+}
+
 void MIS_Node::MISBuildingBroadcast(Message msg) const
 {
     for(auto target : std::views::values(active_MIS_building_neighbors))
@@ -34,7 +40,7 @@ void MIS_Node::HandleMISBuildingMsg(node_id_t sender, Message msg)
     {
         if (std::get<bool>(msg.msg) == true)
         {
-            my_MIS = dynamic_cast<MIS_Node*>(neighbors[sender]);
+            my_MIS = GetNeighbor(sender);
             MISBuildingBroadcast(Message(false));
         }
         else
@@ -168,7 +174,7 @@ void MIS_Node::PostPathTableBroadacst()
         node_id_t MIS_id = std::get<node_id_t>(msg.msg);
         if(!this->path_table_to_MIS_nodes.contains(MIS_id))
         {
-            path_table_to_MIS_nodes[MIS_id] = static_cast<MIS_Node*>(neighbors[sender]);
+            path_table_to_MIS_nodes[MIS_id] = GetNeighbor(sender);
             new_entries_to_path_table.insert(MIS_id);
         }
     });

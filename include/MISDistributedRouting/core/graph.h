@@ -11,11 +11,9 @@ class Graph
 {
 protected:
     std::vector<std::unique_ptr<Node>> nodes;
-    ThreadPool thread_pool;
-
-    void RunTaskOnAllNodes(std::function<void(node_id_t)> task, bool wait=true);
 public:
-    Graph(size_t thread_pool_size=DEFAULT_POOL_SIZE) : thread_pool(thread_pool_size) {};
+    Graph() = default;
+    virtual ~Graph() = default;
 
     virtual void InitGraphNodes(size_t graph_size);
 
@@ -23,7 +21,21 @@ public:
 
     virtual void AddNode();
     virtual void AddEdge(node_id_t node1, node_id_t node2);
+};
 
-    virtual ~Graph() = default;
 
+
+class SyncedGraph : public Graph
+{
+protected:
+    ThreadPool thread_pool;
+
+    void RunTaskOnAllNodes(std::function<void(node_id_t)> task, bool wait=true);
+public:
+    SyncedGraph(size_t thread_pool_size=DEFAULT_POOL_SIZE) : thread_pool(thread_pool_size) {};
+    ~SyncedGraph() = default;
+
+    void AddNode() override;
+
+    void WaitForInactiveThreadPool();
 };

@@ -15,7 +15,7 @@ void Graph::InitGraphNodes(size_t graph_size)
 
 void Graph::AddNode()
 {
-    nodes.emplace_back(std::make_unique<Node>(nodes.size(), &thread_pool));
+    nodes.emplace_back(std::make_unique<Node>(nodes.size()));
 }
 
 void Graph::AddEdge(node_id_t node1, node_id_t node2)
@@ -24,7 +24,12 @@ void Graph::AddEdge(node_id_t node1, node_id_t node2)
     nodes[node2]->AddEdge(nodes[node1].get());
 }
 
-void Graph::RunTaskOnAllNodes(std::function<void(node_id_t)> task, bool wait)
+void SyncedGraph::AddNode()
+{
+    nodes.emplace_back(std::make_unique<MessagerNode>(nodes.size(), &thread_pool));
+}
+
+void SyncedGraph::RunTaskOnAllNodes(std::function<void(node_id_t)> task, bool wait)
 {
     size_t graph_size = GetGraphSize();
     for(node_id_t id=0; id < graph_size ; ++id)
@@ -36,4 +41,10 @@ void Graph::RunTaskOnAllNodes(std::function<void(node_id_t)> task, bool wait)
 
     if(wait)
         thread_pool.WaitForEmptyQueue();
+}
+
+
+void SyncedGraph::WaitForInactiveThreadPool()
+{
+    thread_pool.WaitForEmptyQueue();
 }

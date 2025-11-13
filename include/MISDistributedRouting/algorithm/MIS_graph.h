@@ -4,7 +4,7 @@
 #include "MISDistributedRouting/core/graph.h"
 
 
-class MIS_Graph : public Graph
+class MIS_Graph : public SyncedGraph
 {
 protected:
     bool IsPathTableDone() const;
@@ -12,7 +12,7 @@ protected:
     void BuildMIS();
     void BuildPathTable();
 public:
-    MIS_Graph(size_t thread_pool_size=DEFAULT_POOL_SIZE) : Graph(thread_pool_size) {};
+    MIS_Graph(size_t thread_pool_size=DEFAULT_POOL_SIZE) : SyncedGraph(thread_pool_size) {};
 
     void AddNode() override;
 

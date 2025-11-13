@@ -8,42 +8,55 @@ void Node::AddEdge(Node* other)
     neighbors[other->GetID()] = other;
 }
 
-
-void Node::SendMsg(node_id_t target_id, Message msg) const
+Node* Node::GetNeighbor(node_id_t id) const
 {
-    auto target = neighbors.find(target_id);
+    auto target = neighbors.find(id);
     if(target == neighbors.end())
     {
-        // TODO logger
-        return;
+        // TODO logger didnt find neighbor
+        return nullptr;
     }
-    thread_pool->AddTask([this, target_ptr = target->second, message = std::move(msg)](){
+
+    return target->second;
+}
+
+
+MessagerNode* MessagerNode::GetNeighbor(node_id_t id) const
+{
+    return static_cast<MessagerNode*>(Node::GetNeighbor(id));
+}
+
+
+void MessagerNode::SendMsg(node_id_t target_id, Message msg) const
+{
+    MessagerNode* target_ptr = GetNeighbor(target_id);
+    thread_pool->AddTask([this, target_ptr, message = std::move(msg)](){
         target_ptr->ReceiveMsg(this->id, std::move(message));
     });
 }
 
-void Node::ReceiveMsg(node_id_t src_id, Message msg)
+void MessagerNode::ReceiveMsg(node_id_t src_id, Message msg)
 {
     inbox.ReceiveMsg(src_id ,std::move(msg));
 }
 
-void Node::Broadcast(Message msg) const
+void MessagerNode::Broadcast(Message msg) const
 {
     for(auto target : std::views::values(neighbors))
     {
         thread_pool->AddTask([this, target, msg](){
-            target->ReceiveMsg(this->id, std::move(msg));
+            static_cast<MessagerNode*>(target)->ReceiveMsg(this->id, std::move(msg));
         });
     }
 }
 
 
-std::optional<std::pair<node_id_t, Message>> Node::ReadMsgFromInbox()
+std::optional<std::pair<node_id_t, Message>> MessagerNode::ReadMsgFromInbox()
 {
     return inbox.ReadMsg();
 }
 
-void Node::HandleAllInboxMessages(std::function<void(node_id_t, Message)> func)
+void MessagerNode::HandleAllInboxMessages(std::function<void(node_id_t, Message)> func)
 {
     auto optional_msg = std::move(ReadMsgFromInbox());
 

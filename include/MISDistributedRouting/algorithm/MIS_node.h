@@ -6,7 +6,8 @@
 #include "MISDistributedRouting/core/node.h"
 
 
-class MIS_Node : public Node {
+class MIS_Node : public MessagerNode
+{
 private:
     std::mt19937 rng;
 protected:
@@ -21,12 +22,12 @@ protected:
 
     double GetRandNumber(double min_val = 0, double max_val = 1.0);
 public:
-    MIS_Node(node_id_t id, ThreadPool* pool) : Node(id, pool), is_MIS(false), my_MIS(nullptr), rand_num(0), rng(std::random_device{}()) {}
+    MIS_Node(node_id_t id, ThreadPool* pool) : MessagerNode(id, pool), is_MIS(false), my_MIS(nullptr), rand_num(0), rng(std::random_device{}()) {}
     ~MIS_Node() = default;
 
     void AddEdge(Node* other) override;
 
-    void ForwardMsg(Message msg) const;
+    MIS_Node* GetNeighbor(node_id_t id) const override;
 
     std::optional<Message> HandleRegularMsg(Message msg) const;
 
