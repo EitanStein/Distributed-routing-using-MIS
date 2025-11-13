@@ -7,6 +7,13 @@ void SimulationGraph::AddNode()
     ConnectNewNode();
 }
 
+void SimulationGraph::AddNode(double x, double y)
+{
+    nodes.emplace_back(std::make_unique<SimulationNode>(nodes.size(), &thread_pool, std::pair<double, double>(x, y)));
+    
+    ConnectNewNode();
+}
+
 
 void SimulationGraph::ConnectNewNode()
 {

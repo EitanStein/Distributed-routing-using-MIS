@@ -22,6 +22,7 @@ public:
     ~SimulationGraph() = default;
 
     void AddNode() override;
+    void AddNode(double x, double y);
     void AddEdge(node_id_t node1, node_id_t node2) override;
 
     SimulationNode* GetNode(node_id_t) const override;
