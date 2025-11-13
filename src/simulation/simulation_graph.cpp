@@ -4,6 +4,12 @@ void SimulationGraph::AddNode()
 {
     nodes.emplace_back(std::make_unique<SimulationNode>(nodes.size(), &thread_pool, 0, graph_width));
     
+    ConnectNewNode();
+}
+
+
+void SimulationGraph::ConnectNewNode()
+{
     size_t graph_size = GetGraphSize();
 
     auto new_node_ptr = static_cast<SimulationNode*>(nodes[graph_size-1].get());

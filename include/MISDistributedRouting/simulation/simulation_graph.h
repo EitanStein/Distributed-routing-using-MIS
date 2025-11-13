@@ -16,7 +16,7 @@ protected:
     UnitConnectivity connection_checker;
     std::vector<std::unique_ptr<SimulationEdge>> edges; // TODO change edges - cannot get specific pointer easily atm
 
-    void CreateUnitGraphEdges();
+    void ConnectNewNode();
 public:
     SimulationGraph(size_t thread_pool_size=DEFAULT_POOL_SIZE, double graph_width=DEFAULT_GRAPH_LENGTH) : MIS_Graph(thread_pool_size), graph_width(graph_width) {};
     ~SimulationGraph() = default;
