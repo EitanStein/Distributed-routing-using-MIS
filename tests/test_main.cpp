@@ -67,7 +67,7 @@ public:
 class TestGraph : public SimulationGraph
 {
 public:
-    TestGraph(size_t thread_pool_size=DEFAULT_POOL_SIZE, double graph_width=DEFAULT_GRAPH_LENGTH) : SimulationGraph(thread_pool_size, graph_width) {};
+    TestGraph(double graph_width=DEFAULT_GRAPH_WIDTH, double graph_height=DEFAULT_GRAPH_HEIGHT, size_t thread_pool_size=DEFAULT_POOL_SIZE) : SimulationGraph(graph_width, graph_height, thread_pool_size) {};
     using SimulationGraph::AddNode;
     void AddNode() override {
         nodes.emplace_back(std::make_unique<TestNode>(nodes.size(), &thread_pool, 0, graph_width));

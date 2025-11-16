@@ -14,9 +14,4 @@ target_link_libraries(tests
         Catch2::Catch2WithMain
 )
 
-target_include_directories(tests
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../include
-)
-
 add_test(NAME MIS_Graph_Checks COMMAND $<TARGET_FILE:tests>)

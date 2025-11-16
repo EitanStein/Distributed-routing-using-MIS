@@ -1,10 +1,14 @@
 add_library(simulation_module
     simulation_graph.cpp
+    simulation_window.cpp
+    simulator.cpp
 )
 
 target_link_libraries(simulation_module
     PRIVATE
         spdlog::spdlog
+        SFML::Graphics
+        SFML::Window
 )
 
 target_include_directories(simulation_module
