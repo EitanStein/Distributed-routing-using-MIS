@@ -11,11 +11,13 @@ class Graph
 {
 protected:
     std::vector<std::unique_ptr<Node>> nodes;
+
+    virtual void InitGraphNodes(size_t graph_size);
 public:
     Graph() = default;
     virtual ~Graph() = default;
 
-    virtual void InitGraphNodes(size_t graph_size);
+    virtual void InitGraph(size_t graph_size);
 
     size_t GetGraphSize() const { return nodes.size(); }
 
@@ -38,9 +40,13 @@ public:
     SyncedGraph(size_t thread_pool_size=DEFAULT_POOL_SIZE) : thread_pool(thread_pool_size) {};
     ~SyncedGraph() = default;
 
+    void InitGraph(size_t graph_size) override;
     void AddNode() override;
 
-    void TransferPendingMessages();
-
     MessagerNode* GetNode(node_id_t) const override;
+
+    virtual bool RunCycle();
+
+    virtual void TransferPendingMessages();
+    bool AreMessagesPending();
 };

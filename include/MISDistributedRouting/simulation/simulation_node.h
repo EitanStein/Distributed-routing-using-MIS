@@ -1,13 +1,22 @@
 #pragma once
 
 #include "MISDistributedRouting/algorithm/MIS_node.h"
-#include "eucledian_trait.h"
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 
-class SimulationNode : public MIS_Node, public EucledianTrait
+class SimulationNode : public MIS_Node
 {
+private:
+    sf::CircleShape shape;
+    bool is_sending_msg;
 public:
-    SimulationNode(node_id_t id, ThreadPool* pool, double min_val, double max_val) : MIS_Node(id, pool), EucledianTrait(GetRandNumber(min_val, max_val), GetRandNumber(min_val, max_val)) {}
-    SimulationNode(node_id_t id, ThreadPool* pool, std::pair<double, double> point) : MIS_Node(id, pool), EucledianTrait(point.first, point.second) {}
+    SimulationNode(node_id_t id, ThreadPool* pool) : MIS_Node(id, pool), is_sending_msg(false) {}
+    SimulationNode(node_id_t id, ThreadPool* pool, const sf::Vector2f& point);
     ~SimulationNode() = default;
 
+    void SetPosition(const sf::Vector2f& point);
+    sf::Vector2f GetPosition() const;
+    bool Contains(const sf::Vector2f& point);
+
+    void Draw(sf::RenderWindow& window);
 };

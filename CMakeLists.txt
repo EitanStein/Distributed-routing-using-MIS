@@ -34,11 +34,5 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
 add_subdirectory(src)
 add_subdirectory(tests)
-
-# TODO
-# add_subdirectory(external/imgui)
-# add_subdirectory(external/implot)

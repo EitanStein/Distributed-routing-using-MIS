@@ -65,15 +65,37 @@ void MessagerNode::HandleAllInboxMessages(std::function<void(node_id_t, Message)
 }
 
 
+void MessagerNode::HandleAllInboxMessages()
+{
+    while(std::optional<std::pair<node_id_t, Message>> optional_msg = inbox.PopMsg()) // TODO check that move works here
+    {
+        auto [src, msg] = std::move(optional_msg.value());
+
+        HandleMsg(src, std::move(msg));
+    }
+}
+
+
 void MessagerNode::SendAllOutboxMessages()
 {
-    while(std::optional<std::pair<node_id_t, Message>> optional_msg = outbox.PopMsg()) // TODO check that move works here
+    while(std::optional<std::pair<node_id_t, Message>> optional_msg = outbox.PopMsg())
     {
         auto [target, msg] = std::move(*optional_msg);
         MessagerNode* target_ptr = GetNeighbor(target);
+        if(target_ptr == nullptr)
+        {
+            LOG_ERROR("Outbox message from {} to nonexistent neighbor {}", id, target);
+            continue;
+        }
+
         thread_pool->AddTask([this, target_ptr, message = std::move(msg)](){
             target_ptr->AddInboxMsg(this->id, std::move(message));
         });
-    }
-    
+    } 
+}
+
+
+bool MessagerNode::IsOutboxEmpty()
+{
+    return outbox.IsEmpty();
 }

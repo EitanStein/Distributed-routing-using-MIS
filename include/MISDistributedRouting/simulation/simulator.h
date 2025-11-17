@@ -4,6 +4,7 @@
 #include "simulation_window.h"
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include "MISDistributedRouting/config.h"
 
 
 
@@ -11,13 +12,23 @@ class Simulator
 {
 private:
     SimulationWindow window;
-    double window_graph_ratio;
 
     SimulationGraph graph;
+    GraphStatus graph_status;
+
+    SimulationNode* sender;
+    SimulationNode* recipient;
+
+    void HandleMouseClick(const sf::Event::MouseButtonReleased* key_pressed);
+    void HandleKeyboardInput(const sf::Event::KeyPressed* key_pressed);
+    bool IsMouseClickOnPanel(const sf::Vector2i& mouse_pos) const;
+
+    void ResetMsgNodes();
 public:
-    Simulator(double ratio=10) : window("Simulator"), window_graph_ratio(ratio), 
-                                graph(window.GetGraphWindowSize().first/ratio, window.GetGraphWindowSize().second/ratio) {}
+    Simulator() : window("Simulator"), graph(window.GetGraphWindowSize().first, window.GetGraphWindowSize().second, DISTANCE_TO_PIXEL_RATIO), 
+                    graph_status(EMPTY), sender(nullptr), recipient(nullptr) {}
     ~Simulator() = default;
 
     void Run();
+    
 };

@@ -51,29 +51,32 @@ void MIS_Node::HandleMISBuildingMsg(node_id_t sender, Message msg)
     }
 }
 
-std::optional<Message> MIS_Node::HandleRegularMsg(Message msg)
+void MIS_Node::HandleMsg(node_id_t sender, Message msg)
 {
     if(!msg.recipient.has_value())
     {
         LOG_ERROR("regular message recipient is nullopt");
-        return std::nullopt;
+        return;
     }
 
     node_id_t msg_recipient = msg.recipient.value();
     if(msg_recipient == id)
-        return msg;
+    {
+        LOG_INFO("Node {} received from Node {} the msg:\n{}", id, msg.author.value(), std::get<std::string>(msg.msg));
+        return;
+    }
 
     if(!msg.router_to_recipient.has_value())
     {
         LOG_ERROR("regular message router-to-recipient is nullopt");
-        return std::nullopt;
+        return;
     }
 
     node_id_t recipient_MIS_node = msg.router_to_recipient.value();
     if(recipient_MIS_node == id)
     {
         AddOutboxMsg(msg_recipient, std::move(msg));
-        return std::nullopt;
+        return;
     }
 
     if(path_table_to_MIS_nodes.contains(recipient_MIS_node))
@@ -85,8 +88,7 @@ std::optional<Message> MIS_Node::HandleRegularMsg(Message msg)
     {
         LOG_ERROR("regular message - target ({}) MIS node ({}) is not in path table", recipient_MIS_node, msg_recipient);
     }
-    
-    return std::nullopt;
+
 }
 
 double MIS_Node::GetRandNumber(double min_val, double max_val)
@@ -107,21 +109,9 @@ void MIS_Node::MISBroadcast()
     rand_num = GetRandNumber();    
 
     MISBuildingBroadcast(Message(rand_num));
-}
 
-void MIS_Node::PostMISBroadacst()
-{
-    if(my_MIS != nullptr)
-    {
-        inbox.Clear();
-        return;
-    }
-
+    // setting to true - might change to false on post cycle when reading messages
     is_MIS = true;
-
-    HandleAllInboxMessages([this](node_id_t sender, Message msg) {
-        this->HandleMISBuildingMsg(sender, std::move(msg));
-    });
 }
 
 void MIS_Node::BroadcastMISStatus()
@@ -134,30 +124,21 @@ void MIS_Node::BroadcastMISStatus()
         MISBuildingBroadcast(Message(true));
         my_MIS = this;
         active_MIS_building_neighbors.clear();
+        new_entries_to_path_table.insert(id);
     }
 }
 
-void MIS_Node::PostMISStatusBroadacst()
+void MIS_Node::PostMISBroadacst()
 {
     if(my_MIS != nullptr)
     {
         inbox.Clear();
         return;
-    }
+    }  
 
     HandleAllInboxMessages([this](node_id_t sender, Message msg) {
         this->HandleMISBuildingMsg(sender, std::move(msg));
     });
-}
-
-
-
-void MIS_Node::BuildPathTableBroadacstStart()
-{
-    if(is_MIS == false)
-        return;
-
-    Broadcast(Message(id));
 }
 
 
@@ -181,7 +162,64 @@ void MIS_Node::PostPathTableBroadacst()
     });
 }
 
-bool MIS_Node::IsNewPathTableEntriesEmpty() const
+
+void MIS_Node::PreCycle()
 {
-    return new_entries_to_path_table.empty();
+    if(status == INIT)
+        return;
+
+    // regular msg
+    if(status == COMPLETE)
+    {
+        return;
+    }
+
+    if(status == MIS_BUILDING)
+    {
+        if (my_MIS != nullptr)
+        {
+            rand_num = 0;
+            return;
+        }
+
+        if(isRandNumMISCycle)
+            MISBroadcast();
+        else
+            BroadcastMISStatus();
+        return;
+    }
+
+    if(status == PATH_BUILDING)
+    {
+        BuildPathTableBroadacst();
+        return;
+    }
+
+}
+
+void MIS_Node::PostCycle()
+{
+    if(status == INIT)
+        return;
+
+    // regular msg
+    if(status == COMPLETE)
+    {
+        HandleAllInboxMessages();
+        return;
+    }
+
+    if(status == MIS_BUILDING)
+    {
+        PostMISBroadacst();
+
+        isRandNumMISCycle = !isRandNumMISCycle;
+        return;
+    }
+
+    if(status == PATH_BUILDING)
+    {
+        PostPathTableBroadacst();
+        return;
+    }
 }

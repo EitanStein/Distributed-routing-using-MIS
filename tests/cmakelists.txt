@@ -12,6 +12,8 @@ target_link_libraries(tests
         simulation_module
         spdlog::spdlog
         Catch2::Catch2WithMain
+        SFML::Graphics 
+        SFML::Window
 )
 
 add_test(NAME MIS_Graph_Checks COMMAND $<TARGET_FILE:tests>)

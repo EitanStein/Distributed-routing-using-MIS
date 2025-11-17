@@ -37,12 +37,19 @@ public:
 
     MessagerNode* GetNeighbor(node_id_t id) const override;
 
+    virtual void HandleMsg(node_id_t sender, Message msg) {}
     
     void AddInboxMsg(node_id_t from_id, Message msg);
     std::optional<std::pair<node_id_t, Message>> ReadMsgFromInbox();
+    void HandleAllInboxMessages();
     void HandleAllInboxMessages(std::function<void(node_id_t, Message)>);
 
     void AddOutboxMsg(node_id_t dest_id, Message msg);
     void Broadcast(Message msg);
+
+    bool IsOutboxEmpty();
+
+    virtual void PreCycle() {}
     void SendAllOutboxMessages();
+    virtual void PostCycle() { HandleAllInboxMessages(); }
 };

@@ -11,20 +11,10 @@
 class TestNode : public SimulationNode
 {
 public:
-    TestNode(node_id_t id, ThreadPool* pool, double min_val, double max_val) : SimulationNode(id, pool, min_val, max_val) {}
+    TestNode(node_id_t id, ThreadPool* pool) : SimulationNode(id, pool) {}
+    TestNode(node_id_t id, ThreadPool* pool, const sf::Vector2f& point) : SimulationNode(id, pool, point) {}
     TestNode* GetNeighbor(node_id_t node_id) {return static_cast<TestNode*>(Node::GetNeighbor(node_id));}
     node_id_t GetMyMisID() const {return my_MIS->GetID();}
-
-    void PrintPathTable() const {
-        for (auto [id, ptr] : path_table_to_MIS_nodes)
-        {
-            LOG_DEBUG("node {} has a path to {} through", this->id, id, ptr->GetID());
-        } 
-    }
-    bool IsOutboxEmpty()
-    {
-        return outbox.IsEmpty();
-    }
 
     bool IsMISNode() {return is_MIS;}
 
@@ -68,19 +58,18 @@ class TestGraph : public SimulationGraph
 {
 public:
     TestGraph(double graph_width=DEFAULT_GRAPH_WIDTH, double graph_height=DEFAULT_GRAPH_HEIGHT, size_t thread_pool_size=DEFAULT_POOL_SIZE) : SimulationGraph(graph_width, graph_height, thread_pool_size) {};
-    using SimulationGraph::AddNode;
-    void AddNode() override {
-        nodes.emplace_back(std::make_unique<TestNode>(nodes.size(), &thread_pool, 0, graph_width));
-    
-        size_t graph_size = GetGraphSize();
 
-        auto new_node_ptr = GetNode(graph_size - 1);
-        for(size_t i = 0 ; i < graph_size - 1 ; ++i)
-        {
-            auto old_node_ptr = static_cast<TestNode*>(nodes[i].get());
-            if(connection_checker.AreConnected(*old_node_ptr, *new_node_ptr))
-                AddEdge(old_node_ptr->GetID(), new_node_ptr->GetID());
-        }
+    void AddNode() override { 
+        nodes.emplace_back(std::make_unique<TestNode>(nodes.size(), &thread_pool));
+    
+        ConnectNewNode();
+    }
+
+    void AddNode(float x, float y) override
+    {
+        nodes.emplace_back(std::make_unique<TestNode>(nodes.size(), &thread_pool, sf::Vector2f({x, y})));
+    
+        ConnectNewNode();
     }
 
     TestNode* GetNode(node_id_t id) const override {
@@ -90,7 +79,7 @@ public:
     void SendMessage(node_id_t sender, node_id_t receiver, std::string msg)
     {
         auto receiver_router_id = GetNode(receiver)->GetMyMisID();
-        GetNode(sender)->HandleRegularMsg(Message(sender, receiver, receiver_router_id, msg));
+        GetNode(sender)->HandleMsg(sender, Message(sender, receiver, receiver_router_id, msg));
     }
 
     std::optional<std::pair<node_id_t, Message>> GetMessageFromNode(node_id_t node_id)
@@ -105,20 +94,10 @@ public:
             if(msg_from_inbox == std::nullopt)
                 return;
 
-            GetNode(id)->HandleRegularMsg(std::move(msg_from_inbox.value().second));
+            GetNode(id)->HandleMsg(msg_from_inbox.value().first, std::move(msg_from_inbox.value().second));
         });
 
         WaitForInactiveThreadPool();
-    }
-
-    bool AreTherePendingMessages()
-    {
-        for(node_id_t id = 0 ; id < GetGraphSize() ; ++id)
-        {
-            if (!GetNode(id)->IsOutboxEmpty())
-                return true;
-        }
-        return false;
     }
 
     bool IsMISConsistent()
@@ -140,6 +119,15 @@ public:
         }
         return false;
     }
+
+    void InitMIS()
+    {
+        AdvanceStatus();
+        while(status!= MIS_Node::COMPLETE)
+        {
+            RunCycle();
+        }
+    }
 };
 
 TEST_CASE("Graph creation no self neighbors check", "")
@@ -147,7 +135,7 @@ TEST_CASE("Graph creation no self neighbors check", "")
     INIT_LOGGER();
 
     TestGraph graph;
-    graph.InitGraphNodes(100);
+    graph.InitGraph(100);
 
     graph.InitMIS();
 
@@ -158,7 +146,7 @@ TEST_CASE("Graph creation no self neighbors check", "")
 TEST_CASE("MIS Creation check", "")
 {
     TestGraph graph;
-    graph.InitGraphNodes(100);
+    graph.InitGraph(100);
 
     graph.InitMIS();
 
@@ -204,7 +192,7 @@ TEST_CASE("Check sending message on random graph", "")
 {
     const double GRAPH_WIDTH = 10;
     TestGraph graph(std::thread::hardware_concurrency(), GRAPH_WIDTH);
-    graph.InitGraphNodes(100);
+    graph.InitGraph(100);
 
     graph.InitMIS();
     
@@ -214,7 +202,7 @@ TEST_CASE("Check sending message on random graph", "")
     while(final_msg == std::nullopt)
     {  
         graph.ReadMsgFromInboxOnAll();
-        if(!graph.AreTherePendingMessages())
+        if(!graph.AreMessagesPending())
             break;
         graph.TransferPendingMessages();
         final_msg = graph.GetMessageFromNode(5);

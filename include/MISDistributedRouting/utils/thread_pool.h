@@ -11,6 +11,7 @@
 class ThreadPool
 {
 private:
+    size_t thread_pool_size;
     std::mutex queue_lock;
     std::vector<std::jthread> threads;
     std::condition_variable queue_cv;
@@ -23,6 +24,10 @@ private:
 public:
     ThreadPool(size_t thread_pool_size);
     ~ThreadPool();
+
+    void InitPool();
+    void StopAllThreads();
+
     bool IsTaskQueueEmpty();
     void WaitForEmptyQueue();
     void AddTask(std::function<void()> task);

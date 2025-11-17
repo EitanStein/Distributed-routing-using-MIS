@@ -3,8 +3,15 @@
 #include <ranges>
 
 
-ThreadPool::ThreadPool(size_t thread_pool_size) : num_active_tasks(0)
+ThreadPool::ThreadPool(size_t thread_pool_size) : thread_pool_size(thread_pool_size) ,num_active_tasks(0)
 {
+    InitPool();
+}
+
+
+void  ThreadPool::InitPool()
+{
+    threads.clear();
     threads.reserve(thread_pool_size);
     for(auto i : std::views::iota(size_t{0}, thread_pool_size))
     {
@@ -14,14 +21,19 @@ ThreadPool::ThreadPool(size_t thread_pool_size) : num_active_tasks(0)
     }
 }
 
-
-
-ThreadPool::~ThreadPool()
+void ThreadPool::StopAllThreads()
 {
     for(auto& th : threads)
         th.request_stop();
     
     queue_cv.notify_all();
+}
+
+
+
+ThreadPool::~ThreadPool()
+{
+    StopAllThreads();
 }
 
 
