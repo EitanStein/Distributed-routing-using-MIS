@@ -123,7 +123,7 @@ public:
     void InitMIS()
     {
         AdvanceStatus();
-        while(status!= MIS_Node::COMPLETE)
+        while(stage!= MIS_Node::COMPLETE)
         {
             RunCycle();
         }
@@ -192,7 +192,7 @@ TEST_CASE("Check sending message on random graph", "")
 {
     const double GRAPH_WIDTH = 10;
     TestGraph graph(std::thread::hardware_concurrency(), GRAPH_WIDTH);
-    graph.InitGraph(100);
+    graph.InitGraph(300);
 
     graph.InitMIS();
     
@@ -206,6 +206,32 @@ TEST_CASE("Check sending message on random graph", "")
             break;
         graph.TransferPendingMessages();
         final_msg = graph.GetMessageFromNode(5);
+    }
+
+    if(final_msg.has_value())
+        REQUIRE(std::get<std::string>(final_msg.value().second.msg)==msg);
+}
+
+
+
+TEST_CASE("Check sending message to self", "")
+{
+    TestGraph graph;
+    
+    graph.AddNode(1, 1);
+
+    graph.InitMIS();
+    
+    std::string msg = "hello";
+    graph.SendMessage(0, 0, msg);
+    std::optional<std::pair<node_id_t, Message>> final_msg = graph.GetMessageFromNode(0);
+    while(final_msg == std::nullopt)
+    {  
+        graph.ReadMsgFromInboxOnAll();
+        if(!graph.AreMessagesPending())
+            break;
+        graph.TransferPendingMessages();
+        final_msg = graph.GetMessageFromNode(0);
     }
 
     if(final_msg.has_value())

@@ -202,7 +202,7 @@ struct SimulationWindow
     void UpdateNumNodesText(const sf::Keyboard::Key& key) { control_panel.num_nodes_interactive_textbox.UpdateText(key); }
 
 
-    void UpdateInstructions(GraphStatus status) {control_panel.intructions_textbox.text.setString(INSTRUCTIONS.at(status));}
+    void UpdateInstructions(GraphStatus stage) {control_panel.intructions_textbox.text.setString(INSTRUCTIONS.at(stage));}
 
     node_id_t GetNumNodes() const {
         std::string num_nodes_text = control_panel.num_nodes_interactive_textbox.text.getString();

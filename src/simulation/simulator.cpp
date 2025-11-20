@@ -3,7 +3,7 @@
 
 void Simulator::Run()
 {
-    window.UpdateInstructions(graph_status);
+    UpdateStatus(EMPTY);
 
     while(window.IsWindowOpen())
     {
@@ -23,12 +23,7 @@ void Simulator::Run()
             }
         }
 
-        if(graph.RunCycle() && graph_status == CALCULATING_MIS)
-        {
-            graph_status = CALCULATED_MIS;
-            window.UpdateInstructions(graph_status);
-            window.EnableSendMessageOptions();
-        }
+        CheckMIS_CalcStatus();
 
         window.ClearWindow();
         window.DrawPanel();
@@ -36,6 +31,27 @@ void Simulator::Run()
             graph.Draw(window.window);
 
         window.DisplayWindow();
+    }
+}
+
+void Simulator::UpdateStatus(GraphStatus status)
+{
+    graph_status = status;
+    window.UpdateInstructions(status);
+}
+
+
+void Simulator::CheckMIS_CalcStatus()
+{
+    if(graph.RunCycle() && graph_status == CALCULATING_MIS)
+    {
+        UpdateStatus(CALCULATING_PATH_TABLE);
+    }
+
+    if(graph.RunCycle() && graph_status == CALCULATING_PATH_TABLE)
+    {
+        UpdateStatus(DONE_CALCULATING);
+        window.EnableSendMessageOptions();
     }
 }
 
@@ -54,7 +70,7 @@ void Simulator::HandleMouseClick(const sf::Event::MouseButtonReleased* key_press
 {
     if(key_pressed->button != sf::Mouse::Button::Left)
         return;
-        
+
     window.DeactivateMessageText();
     window.DeactivateNumNodesText();
 
@@ -67,15 +83,14 @@ void Simulator::HandleMouseClick(const sf::Event::MouseButtonReleased* key_press
             if(num_nodes == 0)
                 return;
 
-            graph_status = EMPTY;
+            UpdateStatus(EMPTY);
             window.DisableSendMessageOptions();
             window.Disable_MIS_Options();
 
             graph.InitGraph(num_nodes);
 
             window.Enable_MIS_Options();
-            graph_status = INITIALIZED;
-            window.UpdateInstructions(graph_status);
+            UpdateStatus(INITIALIZED);
         }
         else if(window.IsHoveringNumNodesText(sf::Vector2f(mouse_pos)))
         {
@@ -87,8 +102,7 @@ void Simulator::HandleMouseClick(const sf::Event::MouseButtonReleased* key_press
 
             window.Disable_MIS_Options();
             
-            graph_status = CALCULATING_MIS;
-            window.UpdateInstructions(graph_status);
+            UpdateStatus(CALCULATING_MIS);
         }
         else if(window.IsHoveringSendMessageButton(sf::Vector2f(mouse_pos)))
         {
@@ -109,7 +123,7 @@ void Simulator::HandleMouseClick(const sf::Event::MouseButtonReleased* key_press
     }
     else
     {
-        if(graph_status != CALCULATED_MIS)
+        if(graph_status != DONE_CALCULATING)
             return;
 
         SimulationNode* node_ptr = graph.GetNode(sf::Vector2f(mouse_pos));

@@ -4,7 +4,7 @@
 
 void MIS_Graph::InitGraph(size_t graph_size)
 {
-    status = MIS_Node::INIT;
+    stage = MIS_Node::INIT;
     SyncedGraph::InitGraph(graph_size);
 }
 
@@ -20,13 +20,13 @@ MIS_Node* MIS_Graph::GetNode(node_id_t node_id) const
 
 bool MIS_Graph::RunCycle()
 {
-    if(status == MIS_Node::INIT)
+    if(stage == MIS_Node::INIT)
         return false;
 
     bool ret = SyncedGraph::RunCycle();
 
     // MIS building has 2 steps of broadcasting and retreiving msgs
-    if(status == MIS_Node::MIS_BUILDING)
+    if(stage == MIS_Node::MIS_BUILDING)
         ret = SyncedGraph::RunCycle();
 
 
@@ -39,10 +39,10 @@ bool MIS_Graph::RunCycle()
 
 void MIS_Graph::AdvanceStatus()
 {
-    if(status == MIS_Node::COMPLETE)
+    if(stage == MIS_Node::COMPLETE)
         return;
 
-    status = static_cast<MIS_Node::MIS_Stage>(static_cast<int>(status) + 1);
+    stage = static_cast<MIS_Node::MIS_Stage>(static_cast<int>(stage) + 1);
     for(node_id_t id=0; id < nodes.size() ; ++id)
         GetNode(id)->AdvanceStage();
 }

@@ -19,7 +19,7 @@ protected:
     bool is_MIS;
     MIS_Node* my_MIS;
 
-    MIS_Stage status;
+    MIS_Stage stage;
     bool isRandNumMISCycle;
 
     std::unordered_map<node_id_t, MIS_Node*> active_MIS_building_neighbors;
@@ -40,7 +40,7 @@ protected:
     void PostPathTableBroadacst();
 public:
     MIS_Node(node_id_t id, ThreadPool* pool) : MessagerNode(id, pool), is_MIS(false), my_MIS(nullptr), rand_num(0), 
-                                                rng(std::random_device{}()), status(INIT), isRandNumMISCycle(true) {}
+                                                rng(std::random_device{}()), stage(INIT), isRandNumMISCycle(true) {}
     ~MIS_Node() = default;
 
     void AddEdge(Node* other) override;
@@ -53,5 +53,5 @@ public:
     void PreCycle() override;
     void PostCycle() override;
 
-    void AdvanceStage() { if (status < COMPLETE) status = static_cast<MIS_Stage>(static_cast<int>(status) + 1);}
+    void AdvanceStage() { if (stage < COMPLETE) stage = static_cast<MIS_Stage>(static_cast<int>(stage) + 1);}
 };

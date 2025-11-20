@@ -108,8 +108,7 @@ bool SyncedGraph::RunCycle()
 
     bool are_messages_pending = AreMessagesPending();
 
-    if(are_messages_pending)
-        TransferPendingMessages();
+    TransferPendingMessages();
 
     RunTaskOnAllNodes([this](node_id_t node){
         GetNode(node)->PostCycle();

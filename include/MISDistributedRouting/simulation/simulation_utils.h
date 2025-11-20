@@ -26,11 +26,12 @@ namespace COLORS
     const sf::Color SENDING_MSG_NODE(sf::Color::Green);
 }
 
-enum GraphStatus{EMPTY, INITIALIZED, CALCULATING_MIS, CALCULATED_MIS}; // TODO remove dupliacte with MIS_Node status
+enum GraphStatus{EMPTY, INITIALIZED, CALCULATING_MIS, CALCULATING_PATH_TABLE, DONE_CALCULATING}; // TODO remove dupliacte with MIS_Node status
 
 const std::unordered_map<GraphStatus, std::string> INSTRUCTIONS = {
     {EMPTY, "Enter graph size\nand create graph"},
     {INITIALIZED, "Build MIS"},
     {CALCULATING_MIS, "Calculating MIS\nPlease wait"},
-    {CALCULATED_MIS, "Choose sender (1st)\nand recipient (2nd)\ntype message and send"} 
+    {CALCULATING_PATH_TABLE, "Calculating router table\nPlease wait"},
+    {DONE_CALCULATING, "Choose sender (1st)\nand recipient (2nd)\ntype message and send"} 
 };

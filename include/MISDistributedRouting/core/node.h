@@ -50,6 +50,6 @@ public:
     bool IsOutboxEmpty();
 
     virtual void PreCycle() {}
-    void SendAllOutboxMessages();
+    virtual void SendAllOutboxMessages();
     virtual void PostCycle() { HandleAllInboxMessages(); }
 };

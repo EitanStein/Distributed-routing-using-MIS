@@ -165,16 +165,16 @@ void MIS_Node::PostPathTableBroadacst()
 
 void MIS_Node::PreCycle()
 {
-    if(status == INIT)
+    if(stage == INIT)
         return;
 
     // regular msg
-    if(status == COMPLETE)
+    if(stage == COMPLETE)
     {
         return;
     }
 
-    if(status == MIS_BUILDING)
+    if(stage == MIS_BUILDING)
     {
         if (my_MIS != nullptr)
         {
@@ -189,7 +189,7 @@ void MIS_Node::PreCycle()
         return;
     }
 
-    if(status == PATH_BUILDING)
+    if(stage == PATH_BUILDING)
     {
         BuildPathTableBroadacst();
         return;
@@ -199,17 +199,17 @@ void MIS_Node::PreCycle()
 
 void MIS_Node::PostCycle()
 {
-    if(status == INIT)
+    if(stage == INIT)
         return;
 
     // regular msg
-    if(status == COMPLETE)
+    if(stage == COMPLETE)
     {
         HandleAllInboxMessages();
         return;
     }
 
-    if(status == MIS_BUILDING)
+    if(stage == MIS_BUILDING)
     {
         PostMISBroadacst();
 
@@ -217,7 +217,7 @@ void MIS_Node::PostCycle()
         return;
     }
 
-    if(status == PATH_BUILDING)
+    if(stage == PATH_BUILDING)
     {
         PostPathTableBroadacst();
         return;

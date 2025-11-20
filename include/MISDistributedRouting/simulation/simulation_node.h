@@ -19,4 +19,6 @@ public:
     bool Contains(const sf::Vector2f& point);
 
     void Draw(sf::RenderWindow& window);
+
+    void SendAllOutboxMessages() override;
 };

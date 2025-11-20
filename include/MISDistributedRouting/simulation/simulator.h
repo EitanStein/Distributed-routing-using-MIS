@@ -23,9 +23,12 @@ private:
     void HandleKeyboardInput(const sf::Event::KeyPressed* key_pressed);
     bool IsMouseClickOnPanel(const sf::Vector2i& mouse_pos) const;
 
+    void CheckMIS_CalcStatus();
+    void UpdateStatus(GraphStatus status);
+
     void ResetMsgNodes();
 public:
-    Simulator() : window("Simulator"), graph(window.GetGraphWindowSize().first, window.GetGraphWindowSize().second, DISTANCE_TO_PIXEL_RATIO), 
+    Simulator() : window("Simulator"), graph(window.GetGraphWindowSize().first, window.GetGraphWindowSize().second), 
                     graph_status(EMPTY), sender(nullptr), recipient(nullptr) {}
     ~Simulator() = default;
 
