@@ -37,4 +37,8 @@ values that can be changed are
 - FRAME_RATE -> Simulator frame rate, higher frame rate means faster simulator but its harder to track the simulation
 
 
+## Project status
+This is a learning project and is not under development at the moment.
 
+## Notes on design
+Some of the design choices were in order to get more familiar with certain features (such as certain C++17/20 features)
