@@ -211,11 +211,11 @@ struct SimulationWindow
         {
             ret_val = std::stoi(num_nodes_text);
         }
-        catch(const std::invalid_argument& e)
+        catch([[maybe_unused]] const std::invalid_argument& e)
         {
             ret_val = 0;
         }
-        catch(const std::out_of_range& e)
+        catch([[maybe_unused]] const std::out_of_range& e)
         {
             ret_val = 0;
         }

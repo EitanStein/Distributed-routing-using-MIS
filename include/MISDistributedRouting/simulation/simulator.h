@@ -28,7 +28,7 @@ private:
 
     void ResetMsgNodes();
 public:
-    Simulator() : window("Simulator"), graph(window.GetGraphWindowSize().first, window.GetGraphWindowSize().second), 
+    Simulator() : window("Simulator"), graph(double(window.GetGraphWindowSize().first), double(window.GetGraphWindowSize().second)), 
                     graph_status(EMPTY), sender(nullptr), recipient(nullptr) {}
     ~Simulator() = default;
 
