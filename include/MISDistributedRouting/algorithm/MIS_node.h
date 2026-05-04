@@ -39,8 +39,8 @@ protected:
     void BuildPathTableBroadacst();
     void PostPathTableBroadacst();
 public:
-    MIS_Node(node_id_t id, ThreadPool* pool) : MessagerNode(id, pool), is_MIS(false), my_MIS(nullptr), rand_num(0), 
-                                                rng(std::random_device{}()), stage(INIT), isRandNumMISCycle(true) {}
+    MIS_Node(node_id_t id, ThreadPool* pool) : MessagerNode(id, pool), rng(std::random_device{}()), rand_num(0), is_MIS(false), 
+                                                 my_MIS(nullptr), stage(INIT), isRandNumMISCycle(true) {}
     ~MIS_Node() = default;
 
     void AddEdge(Node* other) override;
@@ -48,7 +48,7 @@ public:
     MIS_Node* GetNeighbor(node_id_t id) const override;
     node_id_t GetMyMISID() const {return my_MIS->GetID();}
 
-    void HandleMsg(node_id_t sender, Message msg) override;
+    void HandleMsg([[maybe_unused]] node_id_t sender, Message msg) override;
 
     void PreCycle() override;
     void PostCycle() override;

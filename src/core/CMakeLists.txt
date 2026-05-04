@@ -6,7 +6,9 @@ add_library(core_module
 
 target_link_libraries(core_module
     PRIVATE
+        project_options
         spdlog::spdlog
+        Threads::Threads
 )
 
 target_include_directories(core_module

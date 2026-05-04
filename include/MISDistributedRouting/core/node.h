@@ -37,7 +37,7 @@ public:
 
     MessagerNode* GetNeighbor(node_id_t id) const override;
 
-    virtual void HandleMsg(node_id_t sender, Message msg) {}
+    virtual void HandleMsg(node_id_t, Message) {}
     
     void AddInboxMsg(node_id_t from_id, Message msg);
     std::optional<std::pair<node_id_t, Message>> ReadMsgFromInbox();

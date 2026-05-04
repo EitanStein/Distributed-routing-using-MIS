@@ -63,7 +63,7 @@ void Simulator::ResetMsgNodes()
 
 bool Simulator::IsMouseClickOnPanel(const sf::Vector2i& mouse_pos) const
 {
-    return mouse_pos.x > window.GetGraphWindowSize().first;
+    return mouse_pos.x > int(window.GetGraphWindowSize().first);
 }
 
 void Simulator::HandleMouseClick(const sf::Event::MouseButtonReleased* key_pressed)

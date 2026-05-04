@@ -7,9 +7,11 @@ add_subdirectory(simulation)
 
 add_executable(MISDistributedRouting main.cpp)
 
+target_compile_definitions(MISDistributedRouting PRIVATE ASSETS_PATH="${CMAKE_SOURCE_DIR}/assets/")
 
 target_link_libraries(MISDistributedRouting
     PRIVATE
+        project_options
         core_module
         utils_module
         logging_module

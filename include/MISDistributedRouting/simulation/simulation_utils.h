@@ -10,7 +10,7 @@ constexpr double DEFAULT_GRAPH_HEIGHT = 10.0;
 constexpr uint32_t DEFAULT_WINDOW_WIDTH = 800;
 constexpr uint32_t DEFAULT_CONTROL_PANEL_WIDTH = 250;
 constexpr uint32_t DEFAULT_WINDOW_HEIGHT = 600;
-const sf::Font DEFAULT_FONT("assets/fonts/Arimo/Arimo-Regular.ttf");
+const sf::Font DEFAULT_FONT(std::string(ASSETS_PATH) + "fonts/Arimo/Arimo-Regular.ttf");
 
 namespace COLORS
 {

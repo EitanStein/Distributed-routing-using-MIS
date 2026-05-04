@@ -13,7 +13,7 @@ class TestNode : public SimulationNode
 public:
     TestNode(node_id_t id, ThreadPool* pool) : SimulationNode(id, pool) {}
     TestNode(node_id_t id, ThreadPool* pool, const sf::Vector2f& point) : SimulationNode(id, pool, point) {}
-    TestNode* GetNeighbor(node_id_t node_id) {return static_cast<TestNode*>(Node::GetNeighbor(node_id));}
+    TestNode* GetNeighbor(node_id_t node_id) const override {return static_cast<TestNode*>(Node::GetNeighbor(node_id));}
     node_id_t GetMyMisID() const {return my_MIS->GetID();}
 
     bool IsMISNode() {return is_MIS;}

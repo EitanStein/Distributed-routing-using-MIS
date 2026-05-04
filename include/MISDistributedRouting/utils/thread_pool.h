@@ -3,6 +3,7 @@
 #include <thread>
 #include <queue>
 #include <mutex>
+#include <condition_variable>
 #include <functional>
 #include <stop_token>
 #include <vector>
