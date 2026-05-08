@@ -36,7 +36,7 @@ function(create_project_options)
     # ---------------------------------------------------------
     if(ENABLE_SANITIZERS)
         
-        --- MSVC (Windows) Sanitizers ---
+        # --- MSVC (Windows) Sanitizers ---
         target_compile_options(project_options INTERFACE
             $<$<AND:${IS_MSVC},${IS_DEBUG}>:/fsanitize=address>
         )
