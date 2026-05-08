@@ -34,7 +34,9 @@ class SyncedGraph : public Graph
 protected:
     ThreadPool thread_pool;
 
-    void RunTaskOnAllNodes(std::function<void(node_id_t)> task, bool wait=true);
+    void PreCycleAllNodes();
+    void PostCycleAllNodes();
+
     void WaitForInactiveThreadPool();
 public:
     SyncedGraph(size_t thread_pool_size=DEFAULT_POOL_SIZE) : thread_pool(thread_pool_size) {};
