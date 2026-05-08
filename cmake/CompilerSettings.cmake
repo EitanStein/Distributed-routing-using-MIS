@@ -2,7 +2,9 @@ include_guard(GLOBAL)
 
 function(create_project_options)
     # 1. User-facing option to toggle sanitizers
-    option(ENABLE_SANITIZERS "Enable Address Sanitizers in Debug mode" ON)
+    option(ENABLE_SANITIZERS "Enable Address Sanitizers in Debug mode" OFF)
+    # Create a toggle to enable/disable profiling
+    option(TRACY_ENABLE "Enable Tracy profiling" OFF)
 
     # 2. Create the interface target if it doesn't exist
     if(NOT TARGET project_options)
@@ -34,7 +36,7 @@ function(create_project_options)
     # ---------------------------------------------------------
     if(ENABLE_SANITIZERS)
         
-        # --- MSVC (Windows) Sanitizers ---
+        --- MSVC (Windows) Sanitizers ---
         target_compile_options(project_options INTERFACE
             $<$<AND:${IS_MSVC},${IS_DEBUG}>:/fsanitize=address>
         )
