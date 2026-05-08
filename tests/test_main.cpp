@@ -89,13 +89,17 @@ public:
 
     void ReadMsgFromInboxOnAll()
     {
-        RunTaskOnAllNodes([this](node_id_t id){
-            std::optional<std::pair<node_id_t, Message>> msg_from_inbox = GetNode(id)->ReadMsgFromInbox();
-            if(msg_from_inbox == std::nullopt)
-                return;
+        size_t graph_size = GetGraphSize();
+        for(node_id_t id=0; id < graph_size ; ++id)
+        {
+            thread_pool.AddTask([this, id](){
+                std::optional<std::pair<node_id_t, Message>> msg_from_inbox = GetNode(id)->ReadMsgFromInbox();
+                if(msg_from_inbox == std::nullopt)
+                    return;
 
-            GetNode(id)->HandleMsg(msg_from_inbox.value().first, std::move(msg_from_inbox.value().second));
-        });
+                GetNode(id)->HandleMsg(msg_from_inbox.value().first, std::move(msg_from_inbox.value().second));
+            });
+        }
 
         WaitForInactiveThreadPool();
     }
