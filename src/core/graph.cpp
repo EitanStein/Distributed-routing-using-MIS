@@ -55,20 +55,6 @@ void SyncedGraph::AddNode()
     nodes.emplace_back(std::make_unique<MessagerNode>(nodes.size(), &thread_pool));
 }
 
-void SyncedGraph::RunTaskOnAllNodes(std::function<void(node_id_t)> task, bool wait)
-{
-    size_t graph_size = GetGraphSize();
-    for(node_id_t id=0; id < graph_size ; ++id)
-    {
-        thread_pool.AddTask([id, task](){
-            task(id);
-        });
-    }
-
-    if(wait)
-        thread_pool.WaitForEmptyQueue();
-}
-
 
 void SyncedGraph::WaitForInactiveThreadPool()
 {
@@ -82,9 +68,15 @@ MessagerNode* SyncedGraph::GetNode(node_id_t node_id) const
 
 void SyncedGraph::TransferPendingMessages()
 {
-    RunTaskOnAllNodes([this](node_id_t node){
-        GetNode(node)->SendAllOutboxMessages();
-    });
+    size_t graph_size = GetGraphSize();
+    for(node_id_t id=0; id < graph_size ; ++id)
+    {
+        thread_pool.AddTask([this, id](){
+            GetNode(id)->SendAllOutboxMessages();
+        });
+    }
+
+    thread_pool.WaitForEmptyQueue();
 }
 
 bool SyncedGraph::AreMessagesPending()
@@ -99,20 +91,44 @@ bool SyncedGraph::AreMessagesPending()
 }
 
 
+void SyncedGraph::PreCycleAllNodes()
+{
+    size_t graph_size = GetGraphSize();
+    for(node_id_t id=0; id < graph_size ; ++id)
+    {
+        thread_pool.AddTask([this, id](){
+            GetNode(id)->PreCycle();
+        });
+    }
+
+    WaitForInactiveThreadPool();
+}
+
+
+void SyncedGraph::PostCycleAllNodes()
+{
+    size_t graph_size = GetGraphSize();
+    for(node_id_t id=0; id < graph_size ; ++id)
+    {
+        thread_pool.AddTask([this, id](){
+            GetNode(id)->PostCycle();
+        });
+    }
+
+    WaitForInactiveThreadPool();
+}
+
+
 bool SyncedGraph::RunCycle()
 {
     
-    RunTaskOnAllNodes([this](node_id_t node){
-        GetNode(node)->PreCycle();
-    });
+    PreCycleAllNodes();
 
     bool are_messages_pending = AreMessagesPending();
 
     TransferPendingMessages();
 
-    RunTaskOnAllNodes([this](node_id_t node){
-        GetNode(node)->PostCycle();
-    });
+    PostCycleAllNodes();
 
     return !are_messages_pending;
 }

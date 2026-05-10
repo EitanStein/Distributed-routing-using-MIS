@@ -136,9 +136,12 @@ void MIS_Node::PostMISBroadacst()
         return;
     }  
 
-    HandleAllInboxMessages([this](node_id_t sender, Message msg) {
-        this->HandleMISBuildingMsg(sender, std::move(msg));
-    });
+    while(std::optional<std::pair<node_id_t, Message>> optional_msg = inbox.PopMsg()) // TODO check that move works here
+    {
+        auto [src, msg] = std::move(optional_msg.value());
+
+        HandleMISBuildingMsg(src, std::move(msg));
+    }
 }
 
 
@@ -152,14 +155,17 @@ void MIS_Node::PostPathTableBroadacst()
 {
     new_entries_to_path_table.clear();
 
-    HandleAllInboxMessages([this](node_id_t sender, Message msg) {
+    while(std::optional<std::pair<node_id_t, Message>> optional_msg = inbox.PopMsg()) // TODO check that move works here
+    {
+        auto [src, msg] = std::move(optional_msg.value());
         node_id_t MIS_id = std::get<node_id_t>(msg.msg);
+
         if(!this->path_table_to_MIS_nodes.contains(MIS_id))
         {
-            path_table_to_MIS_nodes[MIS_id] = GetNeighbor(sender);
+            path_table_to_MIS_nodes[MIS_id] = GetNeighbor(src);
             new_entries_to_path_table.insert(MIS_id);
         }
-    });
+    }
 }
 
 

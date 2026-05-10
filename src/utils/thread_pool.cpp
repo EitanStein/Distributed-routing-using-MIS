@@ -68,8 +68,8 @@ void ThreadPool::ThreadLoop(std::stop_token stoken)
         std::function<void()> task;
         {
             std::unique_lock<std::mutex> lock(queue_lock);
-            queue_cv.wait(lock, [this, &stoken](){
-                return stoken.stop_requested() || !this->task_queue.empty();
+            queue_cv.wait(lock, stoken, [this](){
+                return !this->task_queue.empty();
             });
             
             if (stoken.stop_requested())
@@ -83,8 +83,8 @@ void ThreadPool::ThreadLoop(std::stop_token stoken)
         task();
 
         {
-            --num_active_tasks;
             std::unique_lock<std::mutex> lock(queue_lock);
+            --num_active_tasks;
             if(task_queue.empty() && num_active_tasks == 0)
                 tasks_done_cv.notify_all();
         }

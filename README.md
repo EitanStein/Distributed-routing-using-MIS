@@ -43,3 +43,6 @@ This is a learning project and is not under development at the moment.
 
 ## Notes on design
 Some of the design choices were in order to get more familiar with certain features (such as certain C++17/20 features)
+
+the thread pool is likely not being used efficiently - it helps simulate each node 'functioning seperately' but using them efficiently would have been assining a fraction of the network (or of the active nodes at any given time) to each thread to handle (at least while building MIS)
+that way the program creates much less tasks with std::functions (telling nodes to send data to neighbors or handle their inboxes) 

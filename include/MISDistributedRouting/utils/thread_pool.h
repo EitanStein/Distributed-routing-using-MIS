@@ -15,7 +15,7 @@ private:
     size_t thread_pool_size;
     std::mutex queue_lock;
     std::vector<std::jthread> threads;
-    std::condition_variable queue_cv;
+    std::condition_variable_any queue_cv;
     std::queue<std::function<void()>> task_queue;
 
     std::atomic<size_t> num_active_tasks;

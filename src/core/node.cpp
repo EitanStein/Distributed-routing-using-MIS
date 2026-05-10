@@ -54,16 +54,6 @@ std::optional<std::pair<node_id_t, Message>> MessagerNode::ReadMsgFromInbox()
     return inbox.PopMsg();
 }
 
-void MessagerNode::HandleAllInboxMessages(std::function<void(node_id_t, Message)> func)
-{
-    while(std::optional<std::pair<node_id_t, Message>> optional_msg = inbox.PopMsg()) // TODO check that move works here
-    {
-        auto [src, msg] = std::move(optional_msg.value());
-
-        func(src, std::move(msg));
-    }
-}
-
 
 void MessagerNode::HandleAllInboxMessages()
 {
