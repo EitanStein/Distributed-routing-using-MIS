@@ -42,9 +42,7 @@ void MessagerNode::Broadcast(Message msg)
 {
     for(auto target : std::views::keys(neighbors))
     {
-        thread_pool->AddTask([this, target, msg](){
-            AddOutboxMsg(target, std::move(msg));
-        });
+        AddOutboxMsg(target, msg);
     }
 }
 
@@ -78,9 +76,7 @@ void MessagerNode::SendAllOutboxMessages()
             continue;
         }
 
-        thread_pool->AddTask([this, target_ptr, message = std::move(msg)](){
-            target_ptr->AddInboxMsg(this->id, std::move(message));
-        });
+        target_ptr->AddInboxMsg(this->id, std::move(msg));
     } 
 }
 
@@ -88,4 +84,25 @@ void MessagerNode::SendAllOutboxMessages()
 bool MessagerNode::IsOutboxEmpty()
 {
     return outbox.IsEmpty();
+}
+
+using CycleFunc = void(*)(MessagerNode*);
+constexpr std::array<CycleFunc, static_cast<size_t>(MessagerNodeTask::Task::NumTasks)> CycleFuncDispatch{
+    [](MessagerNode* node){node->PreCycle();},
+    [](MessagerNode* node){node->SendAllOutboxMessages();},
+    [](MessagerNode* node){node->PostCycle();}
+};
+
+
+void MessagerNode::PerformTask(MessagerNodeTask::Task task){
+    if(task == MessagerNodeTask::Task::NumTasks)
+    {
+        LOG_ERROR("Can't perform task of type 'NumTasks'");
+        return;
+    }
+
+    CycleFuncDispatch[static_cast<size_t>(task)](
+        this
+    );
+
 }

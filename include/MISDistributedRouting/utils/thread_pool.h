@@ -8,6 +8,7 @@
 #include <stop_token>
 #include <vector>
 #include <atomic>
+#include "MISDistributedRouting/core/types.h"
 
 class ThreadPool
 {
@@ -16,7 +17,7 @@ private:
     std::mutex queue_lock;
     std::vector<std::jthread> threads;
     std::condition_variable_any queue_cv;
-    std::queue<std::function<void()>> task_queue;
+    std::queue<std::pair<MessagerNode*, MessagerNodeTask::Task>> task_queue;
 
     std::atomic<size_t> num_active_tasks;
     std::condition_variable tasks_done_cv;
@@ -31,5 +32,6 @@ public:
 
     bool IsTaskQueueEmpty();
     void WaitForEmptyQueue();
-    void AddTask(std::function<void()> task);
+    
+    void AddTask(MessagerNode*, MessagerNodeTask::Task task);
 };

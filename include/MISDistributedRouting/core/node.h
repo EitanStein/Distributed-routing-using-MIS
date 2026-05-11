@@ -25,6 +25,10 @@ public:
 };
 
 
+namespace MessagerNodeTask{
+    enum class Task {PreCycle=0, SendAllOutboxMessages, PostCycle, NumTasks};
+};
+
 class MessagerNode : public Node
 {
 protected:
@@ -51,4 +55,7 @@ public:
     virtual void PreCycle() {}
     virtual void SendAllOutboxMessages();
     virtual void PostCycle() { HandleAllInboxMessages(); }
+
+    void PerformTask(MessagerNodeTask::Task);
 };
+

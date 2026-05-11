@@ -71,9 +71,7 @@ void SyncedGraph::TransferPendingMessages()
     size_t graph_size = GetGraphSize();
     for(node_id_t id=0; id < graph_size ; ++id)
     {
-        thread_pool.AddTask([this, id](){
-            GetNode(id)->SendAllOutboxMessages();
-        });
+        thread_pool.AddTask(GetNode(id), MessagerNodeTask::Task::SendAllOutboxMessages);
     }
 
     thread_pool.WaitForEmptyQueue();
@@ -96,9 +94,7 @@ void SyncedGraph::PreCycleAllNodes()
     size_t graph_size = GetGraphSize();
     for(node_id_t id=0; id < graph_size ; ++id)
     {
-        thread_pool.AddTask([this, id](){
-            GetNode(id)->PreCycle();
-        });
+        thread_pool.AddTask(GetNode(id), MessagerNodeTask::Task::PreCycle);
     }
 
     WaitForInactiveThreadPool();
@@ -110,14 +106,15 @@ void SyncedGraph::PostCycleAllNodes()
     size_t graph_size = GetGraphSize();
     for(node_id_t id=0; id < graph_size ; ++id)
     {
-        thread_pool.AddTask([this, id](){
-            GetNode(id)->PostCycle();
-        });
+        thread_pool.AddTask(GetNode(id), MessagerNodeTask::Task::PostCycle);
     }
 
     WaitForInactiveThreadPool();
 }
 
+#include <cstdio>
+#include <iostream>
+#include <format>
 
 bool SyncedGraph::RunCycle()
 {

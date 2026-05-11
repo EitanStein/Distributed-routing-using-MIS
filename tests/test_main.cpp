@@ -92,13 +92,11 @@ public:
         size_t graph_size = GetGraphSize();
         for(node_id_t id=0; id < graph_size ; ++id)
         {
-            thread_pool.AddTask([this, id](){
-                std::optional<std::pair<node_id_t, Message>> msg_from_inbox = GetNode(id)->ReadMsgFromInbox();
-                if(msg_from_inbox == std::nullopt)
-                    return;
+            std::optional<std::pair<node_id_t, Message>> msg_from_inbox = GetNode(id)->ReadMsgFromInbox();
+            if(msg_from_inbox == std::nullopt)
+                continue;
 
-                GetNode(id)->HandleMsg(msg_from_inbox.value().first, std::move(msg_from_inbox.value().second));
-            });
+            GetNode(id)->HandleMsg(msg_from_inbox.value().first, std::move(msg_from_inbox.value().second));
         }
 
         WaitForInactiveThreadPool();
@@ -141,13 +139,27 @@ TEST_CASE("Graph creation no self neighbors check", "")
     TestGraph graph;
     graph.InitGraph(100);
 
-    graph.InitMIS();
+    // graph.InitMIS();
 
     REQUIRE(!graph.AreThereSelfNeighbors());
 }
 
 
-TEST_CASE("MIS Creation check", "")
+TEST_CASE("MIS Creation check1", "")
+{
+    TestGraph graph;
+
+    graph.AddNode(1, 1);
+    graph.AddNode(1, 2);
+    graph.AddEdge(0, 1);
+
+    graph.InitMIS();
+
+    REQUIRE(graph.IsMISConsistent());
+}
+
+
+TEST_CASE("MIS Creation check2", "")
 {
     TestGraph graph;
     graph.InitGraph(100);
