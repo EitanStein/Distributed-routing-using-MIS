@@ -20,9 +20,7 @@ void MIS_Node::MISBuildingBroadcast(Message msg)
 {
     for(auto target : std::views::keys(active_MIS_building_neighbors))
     {
-        thread_pool->AddTask([this, target, msg](){
-            AddOutboxMsg(target, std::move(msg));
-        });
+        AddOutboxMsg(target, msg);
     }
 }
 

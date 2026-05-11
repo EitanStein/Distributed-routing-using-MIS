@@ -42,9 +42,7 @@ void MessagerNode::Broadcast(Message msg)
 {
     for(auto target : std::views::keys(neighbors))
     {
-        thread_pool->AddTask([this, target, msg](){
-            AddOutboxMsg(target, std::move(msg));
-        });
+        AddOutboxMsg(target, msg);
     }
 }
 
@@ -78,9 +76,7 @@ void MessagerNode::SendAllOutboxMessages()
             continue;
         }
 
-        thread_pool->AddTask([this, target_ptr, message = std::move(msg)](){
-            target_ptr->AddInboxMsg(this->id, std::move(message));
-        });
+        target_ptr->AddInboxMsg(this->id, std::move(msg));
     } 
 }
 
