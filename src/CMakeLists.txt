@@ -20,11 +20,9 @@ target_link_libraries(MISDistributedRouting
         spdlog::spdlog
         SFML::Graphics 
         SFML::Window
+        Tracy::TracyClient
 )
 
 if(TRACY_ENABLE)
-    # Link your target to Tracy
-    target_link_libraries(MISDistributedRouting PRIVATE Tracy::TracyClient)
-    # Tracy requires this macro to be defined to actually do anything
     target_compile_definitions(MISDistributedRouting PRIVATE TRACY_ENABLE)
 endif()
