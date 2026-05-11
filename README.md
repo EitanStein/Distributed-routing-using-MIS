@@ -21,7 +21,7 @@ A custom gui in c++ that visualizes routing messages between unit graph nodes us
 
 ## Usage
 ```bash
-build/bin/Release/MISDistributedRouting.exe
+build/bin/MISDistributedRouting.exe
 ```
 
 
