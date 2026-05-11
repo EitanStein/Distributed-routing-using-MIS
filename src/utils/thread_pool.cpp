@@ -1,5 +1,6 @@
 #include "MISDistributedRouting/utils/thread_pool.h"
 
+#include "MISDistributedRouting/core/node.h"
 #include <ranges>
 
 
@@ -46,10 +47,10 @@ bool ThreadPool::IsTaskQueueEmpty()
 
 
 
-void ThreadPool::AddTask(std::function<void()> task)
+void ThreadPool::AddTask(MessagerNode* node_ptr, MessagerNodeTask::Task task)
 {
     std::unique_lock<std::mutex> lock(queue_lock);
-    task_queue.push(std::move(task));
+    task_queue.emplace(node_ptr, task);
     queue_cv.notify_one();
 }
 
@@ -65,7 +66,8 @@ void ThreadPool::ThreadLoop(std::stop_token stoken)
 {
     while (!stoken.stop_requested())
     {
-        std::function<void()> task;
+        MessagerNode* node_ptr = nullptr;
+        MessagerNodeTask::Task task;
         {
             std::unique_lock<std::mutex> lock(queue_lock);
             queue_cv.wait(lock, stoken, [this](){
@@ -76,11 +78,12 @@ void ThreadPool::ThreadLoop(std::stop_token stoken)
                 return;
 
             ++num_active_tasks;
-            task = std::move(task_queue.front());
+            node_ptr = task_queue.front().first;
+            task = task_queue.front().second;
             task_queue.pop();
             
         }
-        task();
+        node_ptr->PerformTask(task);
 
         {
             std::unique_lock<std::mutex> lock(queue_lock);
