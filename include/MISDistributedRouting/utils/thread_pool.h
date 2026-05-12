@@ -10,6 +10,7 @@
 #include <atomic>
 #include "MISDistributedRouting/core/types.h"
 
+// TODO use template
 class ThreadPool
 {
 private:
