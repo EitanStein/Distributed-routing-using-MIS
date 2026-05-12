@@ -49,7 +49,7 @@ void MIS_Node::HandleMISBuildingMsg(node_id_t sender, Message msg)
     }
 }
 
-void MIS_Node::HandleMsg(node_id_t sender, Message msg)
+void MIS_Node::HandleMsg([[maybe_unused]] node_id_t sender, Message msg)
 {
     if(!msg.recipient.has_value())
     {
