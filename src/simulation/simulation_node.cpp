@@ -10,6 +10,8 @@ SimulationNode::SimulationNode(node_id_t id, ThreadPool* pool, const sf::Vector2
     SetPosition(point);
 }
 
+SimulationNode::~SimulationNode() = default;
+
 void SimulationNode::SetPosition(const sf::Vector2f& point)
 {
     shape.setPosition(point);
@@ -22,7 +24,7 @@ sf::Vector2f SimulationNode::GetPosition() const
 }
 
 
-bool SimulationNode::Contains(const sf::Vector2f& point)
+bool SimulationNode::Contains(const sf::Vector2f& point) const
 {
     return shape.getGlobalBounds().contains(point);
 }
