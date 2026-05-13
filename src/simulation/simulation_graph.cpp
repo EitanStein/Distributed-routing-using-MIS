@@ -104,7 +104,7 @@ void SimulationGraph::InitGraphNodes(node_id_t num_nodes)
     std::uniform_real_distribution<> distrib_y(0, graph_height); 
 
 
-    for(auto i : std::views::iota(size_t{0}, num_nodes))
+    for([[maybe_unused]] auto i : std::views::iota(size_t{0}, num_nodes))
         AddNode(float(distrib_x(rng)), float(distrib_y(rng)));
 
 }
