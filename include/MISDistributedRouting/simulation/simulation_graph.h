@@ -22,7 +22,7 @@ protected:
 public:
     SimulationGraph(double graph_width=DEFAULT_GRAPH_WIDTH, double graph_height=DEFAULT_GRAPH_HEIGHT, double unit_dist=DEFAULT_UNIT_DIST, size_t thread_pool_size=DEFAULT_POOL_SIZE) : 
                     MIS_Graph(thread_pool_size), graph_width(graph_width - NODE_RADIUS*2), graph_height(graph_height - NODE_RADIUS*2), unit_radius(unit_dist) {};
-    ~SimulationGraph() = default;
+    ~SimulationGraph();
 
     void AddNode() override;
     virtual void AddNode(float x, float y);

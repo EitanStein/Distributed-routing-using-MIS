@@ -4,6 +4,10 @@
 #include <ranges>
 
 
+MIS_Node::MIS_Node(node_id_t id, ThreadPool* pool): MessagerNode(id, pool), rng(std::random_device{}()), rand_num(0), is_MIS(false), 
+                                                 my_MIS(nullptr), stage(INIT), isRandNumMISCycle(true) {}
+MIS_Node::~MIS_Node() = default;
+
 void MIS_Node::AddEdge(Node* other)
 {
     Node::AddEdge(other);

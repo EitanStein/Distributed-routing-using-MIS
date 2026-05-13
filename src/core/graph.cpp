@@ -7,6 +7,8 @@
 #include <thread>
 #include <chrono>
 
+Graph::~Graph() = default;
+
 void Graph::InitGraph(size_t graph_size)
 {
     InitGraphNodes(graph_size);
@@ -42,6 +44,8 @@ Node* Graph::GetNode(node_id_t node_id) const
 
     return nodes[node_id].get();
 }
+
+SyncedGraph::~SyncedGraph() = default;
 
 void SyncedGraph::InitGraph(size_t graph_size)
 {

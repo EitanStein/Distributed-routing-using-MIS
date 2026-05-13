@@ -16,7 +16,7 @@ protected:
     std::unordered_map<node_id_t, Node*> neighbors;
 public:
     Node(node_id_t id) : id(id) {}
-    virtual ~Node() = default;
+    virtual ~Node();
 
     virtual void AddEdge(Node* neighbor);
     virtual Node* GetNeighbor(node_id_t id) const;
@@ -37,7 +37,7 @@ protected:
     MessageBox outbox;
 public:
     MessagerNode(node_id_t id, ThreadPool* pool) : Node(id), thread_pool(pool) {}
-    ~MessagerNode() = default;
+    ~MessagerNode();
 
     MessagerNode* GetNeighbor(node_id_t id) const override;
 

@@ -3,6 +3,8 @@
 #include <ranges>
 #include <random>
 
+SimulationGraph::~SimulationGraph() = default;
+
 void SimulationGraph::AddNode()
 {
     nodes.emplace_back(std::make_unique<SimulationNode>(nodes.size(), &thread_pool));
