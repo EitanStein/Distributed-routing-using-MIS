@@ -15,7 +15,7 @@ protected:
     virtual void InitGraphNodes(size_t graph_size);
 public:
     Graph() = default;
-    virtual ~Graph() = default;
+    virtual ~Graph();
 
     virtual void InitGraph(size_t graph_size);
 
@@ -40,7 +40,7 @@ protected:
     void WaitForInactiveThreadPool();
 public:
     SyncedGraph(size_t thread_pool_size=DEFAULT_POOL_SIZE) : thread_pool(thread_pool_size) {};
-    ~SyncedGraph() = default;
+    ~SyncedGraph();
 
     void InitGraph(size_t graph_size) override;
     void AddNode() override;

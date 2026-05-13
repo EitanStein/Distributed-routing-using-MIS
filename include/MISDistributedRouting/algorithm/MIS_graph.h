@@ -10,6 +10,7 @@ protected:
     MIS_Node::MIS_Stage stage;
 public:
     MIS_Graph(size_t thread_pool_size=DEFAULT_POOL_SIZE) : SyncedGraph(thread_pool_size), stage(MIS_Node::INIT) {};
+    ~MIS_Graph();
 
     void InitGraph(size_t graph_size) override;
     

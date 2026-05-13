@@ -7,6 +7,8 @@
 #include <thread>
 #include <chrono>
 
+Graph::~Graph() = default;
+
 void Graph::InitGraph(size_t graph_size)
 {
     InitGraphNodes(graph_size);
@@ -17,7 +19,7 @@ void Graph::InitGraphNodes(size_t graph_size)
     nodes.clear();
 
     nodes.reserve(graph_size);
-    for(auto i : std::views::iota(size_t{0}, graph_size))
+    for([[maybe_unused]] auto i : std::views::iota(size_t{0}, graph_size))
         AddNode();
 }
 
@@ -42,6 +44,8 @@ Node* Graph::GetNode(node_id_t node_id) const
 
     return nodes[node_id].get();
 }
+
+SyncedGraph::~SyncedGraph() = default;
 
 void SyncedGraph::InitGraph(size_t graph_size)
 {

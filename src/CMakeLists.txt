@@ -19,10 +19,10 @@ target_link_libraries(MISDistributedRouting
         simulation_module
         spdlog::spdlog
         SFML::Graphics 
-        SFML::Window
-        Tracy::TracyClient
+        SFML::Window    
 )
 
 if(TRACY_ENABLE)
+    target_link_libraries(MISDistributedRouting PRIVATE Tracy::TracyClient)
     target_compile_definitions(MISDistributedRouting PRIVATE TRACY_ENABLE)
 endif()

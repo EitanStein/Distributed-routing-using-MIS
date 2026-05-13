@@ -2,6 +2,8 @@
 
 #include <ranges>
 
+MIS_Graph::~MIS_Graph() = default;
+
 void MIS_Graph::InitGraph(size_t graph_size)
 {
     stage = MIS_Node::INIT;

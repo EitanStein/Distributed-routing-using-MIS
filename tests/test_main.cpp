@@ -13,6 +13,7 @@ class TestNode : public SimulationNode
 public:
     TestNode(node_id_t id, ThreadPool* pool) : SimulationNode(id, pool) {}
     TestNode(node_id_t id, ThreadPool* pool, const sf::Vector2f& point) : SimulationNode(id, pool, point) {}
+    ~TestNode() = default;
     TestNode* GetNeighbor(node_id_t node_id) const override {return static_cast<TestNode*>(Node::GetNeighbor(node_id));}
     node_id_t GetMyMisID() const {return my_MIS->GetID();}
 
@@ -58,6 +59,7 @@ class TestGraph : public SimulationGraph
 {
 public:
     TestGraph(double graph_width=DEFAULT_GRAPH_WIDTH, double graph_height=DEFAULT_GRAPH_HEIGHT, size_t thread_pool_size=DEFAULT_POOL_SIZE) : SimulationGraph(graph_width, graph_height, thread_pool_size) {};
+    ~TestGraph() = default;
 
     void AddNode() override { 
         nodes.emplace_back(std::make_unique<TestNode>(nodes.size(), &thread_pool));

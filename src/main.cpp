@@ -1,6 +1,6 @@
 #include "MISDistributedRouting/utils/log_macros.h"
 #include "MISDistributedRouting/simulation/simulator.h"
-#include <tracy/Tracy.hpp>
+#include "MISDistributedRouting/utils/profiling.hpp"
 
 int main()
 {

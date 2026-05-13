@@ -12,11 +12,11 @@ private:
 public:
     SimulationNode(node_id_t id, ThreadPool* pool) : MIS_Node(id, pool), is_sending_msg(false) {}
     SimulationNode(node_id_t id, ThreadPool* pool, const sf::Vector2f& point);
-    ~SimulationNode() = default;
+    ~SimulationNode();
 
     void SetPosition(const sf::Vector2f& point);
     sf::Vector2f GetPosition() const;
-    bool Contains(const sf::Vector2f& point);
+    bool Contains(const sf::Vector2f& point) const;
 
     void Draw(sf::RenderWindow& window);
 

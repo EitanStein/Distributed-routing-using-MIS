@@ -9,6 +9,8 @@ target_compile_definitions(simulation_module PRIVATE ASSETS_PATH="${CMAKE_SOURCE
 
 
 target_link_libraries(simulation_module
+    PUBLIC
+        MIS_algo_module
     PRIVATE
         project_options
         spdlog::spdlog

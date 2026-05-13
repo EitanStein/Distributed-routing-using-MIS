@@ -4,6 +4,9 @@
 
 #include <ranges>
 
+
+Node::~Node() = default;
+
 void Node::AddEdge(Node* other)
 {
     neighbors[other->GetID()] = other;
@@ -20,6 +23,9 @@ Node* Node::GetNeighbor(node_id_t id) const
 
     return target->second;
 }
+
+
+MessagerNode::~MessagerNode() = default;
 
 
 MessagerNode* MessagerNode::GetNeighbor(node_id_t id) const
