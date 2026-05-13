@@ -22,11 +22,15 @@ jobs:
             ninja-build \
             ccache \
             libsfml-dev \
+            libfreetype6-dev \
             libxrandr-dev \
             libxcursor-dev \
             libxi-dev \
             libxinerama-dev \
-            libudev-dev
+            libudev-dev \
+            libopenal-dev \
+            libvorbis-dev \
+            libflac-dev
 
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2
