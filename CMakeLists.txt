@@ -12,6 +12,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(CompilerSettings)
 create_project_options()
 
+set(FETCHCONTENT_BASE_DIR "${CMAKE_SOURCE_DIR}/build/_deps" CACHE PATH "")
+
 include(FetchContent)
 if(TRACY_ENABLE)
   FetchContent_Declare(
