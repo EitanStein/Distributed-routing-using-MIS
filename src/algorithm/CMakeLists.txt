@@ -4,6 +4,8 @@ add_library(MIS_algo_module
 )
 
 target_link_libraries(MIS_algo_module
+    PUBLIC
+        core_module
     PRIVATE
         project_options
         spdlog::spdlog
