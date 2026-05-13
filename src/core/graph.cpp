@@ -17,7 +17,7 @@ void Graph::InitGraphNodes(size_t graph_size)
     nodes.clear();
 
     nodes.reserve(graph_size);
-    for(auto i : std::views::iota(size_t{0}, graph_size))
+    for([[maybe_unused]] auto i : std::views::iota(size_t{0}, graph_size))
         AddNode();
 }
 
