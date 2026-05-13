@@ -2,7 +2,7 @@ include_guard(GLOBAL)
 
 function(create_project_options)
     # 1. User-facing option to toggle sanitizers
-    option(ENABLE_SANITIZERS "Enable Address Sanitizers in Debug mode" OFF)
+    option(ENABLE_SANITIZERS "Enable Sanitizers in Debug mode" OFF)
     # Create a toggle to enable/disable profiling
     option(TRACY_ENABLE "Enable Tracy profiling" OFF)
 
@@ -25,10 +25,10 @@ function(create_project_options)
     # ---------------------------------------------------------
     target_compile_options(project_options INTERFACE
         # Windows Warnings: Level 4 and treat as errors
-        $<$<AND:${IS_MSVC}>:/W4>
+        $<$<AND:${IS_MSVC}>:/W4 /WX>
         
         # Linux Warnings: Wall, Wextra, Pedantic, and treat as errors
-        $<$<AND:${IS_POSIX}>:-Wall -Wextra -Wpedantic>
+        $<$<AND:${IS_POSIX}>:-Wall -Wextra -Wpedantic -Werror>
     )
 
     # ---------------------------------------------------------
@@ -46,10 +46,10 @@ function(create_project_options)
 
         # --- GCC/Clang (Linux) Sanitizers ---
         target_compile_options(project_options INTERFACE
-            $<$<AND:${IS_POSIX},${IS_DEBUG}>:-fsanitize=address -fno-omit-frame-pointer>
+            $<$<AND:${IS_POSIX},${IS_DEBUG}>:-fsanitize=address,undefined -fno-omit-frame-pointer>
         )
         target_link_options(project_options INTERFACE
-            $<$<AND:${IS_POSIX},${IS_DEBUG}>:-fsanitize=address>
+            $<$<AND:${IS_POSIX},${IS_DEBUG}>:-fsanitize=address,undefined>
         )
         
     endif()
