@@ -14,10 +14,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build libsfml-dev ccache
+          sudo apt-get install -y \
+            ninja-build \
+            ccache \
+            libsfml-dev \
+            libxrandr-dev \
+            libxcursor-dev \
+            libxi-dev \
+            libxinerama-dev \
+            libudev-dev
 
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2
