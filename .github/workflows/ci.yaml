@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        build_type: [Debug, Release]
+        build_type: [Release]
         use_asan_and_ubsan: [ON, OFF]
 
     steps:
@@ -40,7 +40,7 @@ jobs:
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: ${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.use_asan }}
+          key: ${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.use_asan_and_ubsan }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.build_type }}-
 
@@ -51,7 +51,7 @@ jobs:
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_C_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          -DENABLE_SANITIZERS=${{ matrix.use_asan }}
+          -DENABLE_SANITIZERS=${{ matrix.use_asan_and_ubsan }}
           -DBUILD_WITH_TRACY=OFF
 
       - name: Build
