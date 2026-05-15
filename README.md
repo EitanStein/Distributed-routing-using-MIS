@@ -8,7 +8,7 @@ A custom gui in c++ that visualizes routing messages between unit graph nodes us
 
 - C++20-compatible compiler
 - CMake 3.28+
-- runs on both linux and windows
+- runs on linux (planned to extend to windows as well)
 
 - SFML/spdlog/Catch2 are fetched automatically via CMake’s FetchContent – no manual installation required.
 
