@@ -23,7 +23,7 @@ if(TRACY_ENABLE)
   FetchContent_Declare(
       tracy
       GIT_REPOSITORY https://github.com/wolfpld/tracy.git
-      GIT_TAG v0.11.1
+      GIT_TAG        c556831ddc6fe26d2fce01c14c97205a9dad46d5 #0.12.2
   )
   FetchContent_MakeAvailable(tracy)
 endif()
@@ -31,14 +31,14 @@ endif()
 FetchContent_Declare(
   spdlog
   GIT_REPOSITORY https://github.com/gabime/spdlog.git
-  GIT_TAG v1.16.0 
+  GIT_TAG        6fa36017cfd5731d617e1a934f0e5ea9c4445b13 #1.15.3
 )
 FetchContent_MakeAvailable(spdlog)
 
 FetchContent_Declare(
     SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG 3.0.2      
+    GIT_TAG        0fa201c969e48ecc253581c5841ce73f44d42f49 #3.0.2     
 )
 FetchContent_MakeAvailable(SFML)
 
@@ -47,7 +47,7 @@ enable_testing()
 FetchContent_Declare(
   Catch2
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-  GIT_TAG        v3.5.2
+  GIT_TAG        6ee0826dcae55ed1e06b2c5701981221e979e1e6 #3.15.0
 )
 FetchContent_MakeAvailable(Catch2)
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
