@@ -31,7 +31,7 @@ endif()
 FetchContent_Declare(
   spdlog
   GIT_REPOSITORY https://github.com/gabime/spdlog.git
-  GIT_TAG        6fa36017cfd5731d617e1a934f0e5ea9c4445b13 #1.15.3
+  GIT_TAG        486b55554f11c9cccc913e11a87085b2a91f706f #1.16.0
 )
 FetchContent_MakeAvailable(spdlog)
 
