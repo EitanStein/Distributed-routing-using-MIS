@@ -1,5 +1,5 @@
 #include "MISDistributedRouting/utils/thread_pool.h"
-
+#include "MISDistributedRouting/utils/profiling.hpp"
 #include "MISDistributedRouting/core/node.h"
 #include <ranges>
 
@@ -49,6 +49,7 @@ bool ThreadPool::IsTaskQueueEmpty()
 
 void ThreadPool::AddTask(MessagerNode* node_ptr, MessagerNodeTask::Task task)
 {
+    // ZoneScopedN("AddTask");
     std::unique_lock<std::mutex> lock(queue_lock);
     task_queue.emplace(node_ptr, task);
     queue_cv.notify_one();
@@ -64,6 +65,7 @@ void ThreadPool::WaitForEmptyQueue()
 
 void ThreadPool::ThreadLoop(std::stop_token stoken)
 {
+    // ZoneScopedN("ThreadLoop");
     while (!stoken.stop_requested())
     {
         MessagerNode* node_ptr = nullptr;

@@ -17,7 +17,13 @@ target_link_libraries(utils_module
         project_options
         spdlog::spdlog
         Threads::Threads
+
 )
+
+if(TRACY_ENABLE)
+    target_link_libraries(utils_module PRIVATE Tracy::TracyClient)
+    target_compile_definitions(utils_module PRIVATE TRACY_ENABLE)
+endif()
 
 target_include_directories(utils_module
     PUBLIC

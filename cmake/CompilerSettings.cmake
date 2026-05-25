@@ -5,6 +5,7 @@ function(create_project_options)
     option(ENABLE_SANITIZERS "Enable Sanitizers in Debug mode" OFF)
     # Create a toggle to enable/disable profiling
     option(TRACY_ENABLE "Enable Tracy profiling" OFF)
+    option(TRACY_BUILD_PROFILER "Build Tracy GUI Profiler App automatically" OFF)
 
     # 2. Create the interface target if it doesn't exist
     if(NOT TARGET project_options)
@@ -23,13 +24,23 @@ function(create_project_options)
     # ---------------------------------------------------------
     # WARNING FLAGS
     # ---------------------------------------------------------
-    target_compile_options(project_options INTERFACE
-        # Windows Warnings: Level 4 and treat as errors
-        $<$<AND:${IS_MSVC}>:/W4 /WX>
-        
-        # Linux Warnings: Wall, Wextra, Pedantic, and treat as errors
-        $<$<AND:${IS_POSIX}>:-Wall -Wextra -Wpedantic -Werror>
-    )
+    if(TRACY_ENABLE)
+        target_compile_options(project_options INTERFACE
+            # Windows Warnings: Level 4 and treat as errors
+            $<$<AND:${IS_MSVC}>:/W4>
+            
+            # Linux Warnings: Wall, Wextra, Pedantic, and treat as errors
+            $<$<AND:${IS_POSIX}>:-Wall -Wextra -Wpedantic>
+        )
+    else()
+        target_compile_options(project_options INTERFACE
+            # Windows Warnings: Level 4 and treat as errors
+            $<$<AND:${IS_MSVC}>:/W4 /WX>
+            
+            # Linux Warnings: Wall, Wextra, Pedantic, and treat as errors
+            $<$<AND:${IS_POSIX}>:-Wall -Wextra -Wpedantic -Werror>
+        )
+    endif()
 
     # ---------------------------------------------------------
     # SANITIZER FLAGS (Only if enabled and in Debug mode)
