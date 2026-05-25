@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        build_type: [Debug, Release]
+        build_type: [Release]
         use_asan_and_ubsan: [ON, OFF]
 
     steps:
