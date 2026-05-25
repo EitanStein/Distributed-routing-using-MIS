@@ -23,11 +23,11 @@ public:
     {
         if(is_MIS)
         {
-            for(auto neigbor_id : std::views::keys(neighbors))
+            for(auto neighbor_ptr : neighbors)
             {
-                if (GetNeighbor(neigbor_id)->IsMISNode())
+                if (static_cast<TestNode*>(neighbor_ptr)->IsMISNode())
                 {
-                    LOG_DEBUG("MIS node {} has MIS node neighbor {}", id, neigbor_id);
+                    LOG_DEBUG("MIS node {} has MIS node neighbor {}", id, neighbor_ptr->GetID());
                     return false;
                 }
             }
@@ -35,9 +35,9 @@ public:
         }
         else
         {
-            for(auto neigbor_id : std::views::keys(neighbors))
+            for(auto neighbor_ptr : neighbors)
             {
-                if (GetNeighbor(neigbor_id)->IsMISNode())
+                if (static_cast<TestNode*>(neighbor_ptr)->IsMISNode())
                     return true;
             }
             LOG_DEBUG("not MIS node {} has no MIS node neighbors", id);
@@ -47,10 +47,14 @@ public:
 
     bool IsSelfNeighbor()
     {
-        if(neighbors.contains(id))
+        if(id_based_neighbors_map.contains(id))
             return true;
 
         return false;
+    }
+
+    void ResetInboxIndexes(){
+        inbox.ResetIndexes();
     }
 };
 
@@ -86,20 +90,28 @@ public:
 
     std::optional<std::pair<node_id_t, Message>> GetMessageFromNode(node_id_t node_id)
     {
+        GetNode(node_id)->ResetInboxIndexes();
         return GetNode(node_id)->ReadMsgFromInbox();
+    }
+
+    void HandleOneMessage(){
+        size_t graph_size = GetGraphSize();
+        for(node_id_t id=0; id < graph_size ; ++id)
+        {
+            GetNode(id)->ResetInboxIndexes();
+            if(GetNode(id)->IsInboxEmpty())
+                continue;
+            std::optional<std::pair<node_id_t, Message>> msg_from_inbox = GetNode(id)->ReadMsgFromInbox();
+
+            GetNode(id)->HandleMsg(msg_from_inbox.value().first, std::move(msg_from_inbox.value().second));
+            GetNode(id)->ReadMsgFromInbox();
+            return;
+        }
     }
 
     void ReadMsgFromInboxOnAll()
     {
-        size_t graph_size = GetGraphSize();
-        for(node_id_t id=0; id < graph_size ; ++id)
-        {
-            std::optional<std::pair<node_id_t, Message>> msg_from_inbox = GetNode(id)->ReadMsgFromInbox();
-            if(msg_from_inbox == std::nullopt)
-                continue;
-
-            GetNode(id)->HandleMsg(msg_from_inbox.value().first, std::move(msg_from_inbox.value().second));
-        }
+        
 
         WaitForInactiveThreadPool();
     }
@@ -134,14 +146,24 @@ public:
     }
 };
 
+
+void ensure_logger_initialized() {
+    // This block will execute exactly once, the first time this function is called
+    [[maybe_unused]] static bool initialized = []() {
+        INIT_LOGGER();
+        return true;
+    }();
+}
+
+
 TEST_CASE("Graph creation no self neighbors check", "")
 {
-    INIT_LOGGER();
+    ensure_logger_initialized();
 
     TestGraph graph;
     graph.InitGraph(100);
 
-    // graph.InitMIS();
+    graph.InitMIS();
 
     REQUIRE(!graph.AreThereSelfNeighbors());
 }
@@ -149,12 +171,13 @@ TEST_CASE("Graph creation no self neighbors check", "")
 
 TEST_CASE("MIS Creation check1", "")
 {
+    ensure_logger_initialized();
     TestGraph graph;
 
     graph.AddNode(1, 1);
     graph.AddNode(1, 2);
     graph.AddEdge(0, 1);
-
+    
     graph.InitMIS();
 
     REQUIRE(graph.IsMISConsistent());
@@ -163,6 +186,7 @@ TEST_CASE("MIS Creation check1", "")
 
 TEST_CASE("MIS Creation check2", "")
 {
+    ensure_logger_initialized();
     TestGraph graph;
     graph.InitGraph(100);
 
@@ -175,6 +199,7 @@ TEST_CASE("MIS Creation check2", "")
 
 TEST_CASE("Check sending message", "")
 {
+    ensure_logger_initialized();
     TestGraph graph;
     
     graph.AddNode(1, 1);
@@ -191,14 +216,16 @@ TEST_CASE("Check sending message", "")
     graph.AddNode(4, 4);
 
     graph.InitMIS();
+    graph.RunCycle();
     
     std::string msg = "hello";
     graph.SendMessage(2, 5, msg);
     std::optional<std::pair<node_id_t, Message>> final_msg = graph.GetMessageFromNode(5);
     while(final_msg == std::nullopt)
     {  
-        graph.ReadMsgFromInboxOnAll();
-        graph.TransferPendingMessages();
+        graph.HandleOneMessage();
+        if(!graph.AreMessagesPending())
+            break;
         final_msg = graph.GetMessageFromNode(5);
     }
 
@@ -208,21 +235,22 @@ TEST_CASE("Check sending message", "")
 
 TEST_CASE("Check sending message on random graph", "")
 {
+    ensure_logger_initialized();
     const double GRAPH_WIDTH = 10;
     TestGraph graph(std::thread::hardware_concurrency(), GRAPH_WIDTH);
     graph.InitGraph(300);
 
     graph.InitMIS();
+    graph.RunCycle();
     
     std::string msg = "hello";
     graph.SendMessage(2, 5, msg);
     std::optional<std::pair<node_id_t, Message>> final_msg = graph.GetMessageFromNode(5);
     while(final_msg == std::nullopt)
     {  
-        graph.ReadMsgFromInboxOnAll();
+        graph.HandleOneMessage();
         if(!graph.AreMessagesPending())
             break;
-        graph.TransferPendingMessages();
         final_msg = graph.GetMessageFromNode(5);
     }
 
@@ -234,6 +262,7 @@ TEST_CASE("Check sending message on random graph", "")
 
 TEST_CASE("Check sending message to self", "")
 {
+    ensure_logger_initialized();
     TestGraph graph;
     
     graph.AddNode(1, 1);
@@ -248,7 +277,6 @@ TEST_CASE("Check sending message to self", "")
         graph.ReadMsgFromInboxOnAll();
         if(!graph.AreMessagesPending())
             break;
-        graph.TransferPendingMessages();
         final_msg = graph.GetMessageFromNode(0);
     }
 

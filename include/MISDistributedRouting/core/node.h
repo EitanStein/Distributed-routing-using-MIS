@@ -13,7 +13,10 @@ class Node
 {
 protected:
     node_id_t id;
-    std::unordered_map<node_id_t, Node*> neighbors;
+    std::vector<Node*> neighbors;
+    std::unordered_map<node_id_t, node_id_t> id_based_neighbors_map;
+
+    std::optional<node_id_t> GetNeighborIdxFromId(node_id_t id) const;
 public:
     Node(node_id_t id) : id(id) {}
     virtual ~Node();
@@ -26,34 +29,35 @@ public:
 
 
 namespace MessagerNodeTask{
-    enum class Task {PreCycle=0, SendAllOutboxMessages, PostCycle, NumTasks};
+    enum class Task {PreCycle=0, PostCycle, NumTasks};
 };
 
 class MessagerNode : public Node
 {
 protected:
     ThreadPool* thread_pool;
-    MessageBox inbox;
-    MessageBox outbox;
+    Inbox inbox;
 public:
     MessagerNode(node_id_t id, ThreadPool* pool) : Node(id), thread_pool(pool) {}
     ~MessagerNode();
 
+    void AddEdge(Node* neighbor) override;
     MessagerNode* GetNeighbor(node_id_t id) const override;
 
-    virtual void HandleMsg(node_id_t, Message) {}
+    virtual void HandleMsg(node_id_t, Message);
     
     void AddInboxMsg(node_id_t from_id, Message msg);
     std::optional<std::pair<node_id_t, Message>> ReadMsgFromInbox();
     void HandleAllInboxMessages();
 
-    void AddOutboxMsg(node_id_t dest_id, Message msg);
+    bool IsInboxEmpty() const;
+
+    void SendMsg(node_id_t dest_id, Message msg);
+    virtual void SendMsg(MessagerNode* dest, Message msg);
     void Broadcast(Message msg);
 
-    bool IsOutboxEmpty();
-
     virtual void PreCycle() {}
-    virtual void SendAllOutboxMessages();
+    // virtual void SendAllOutboxMessages();
     virtual void PostCycle() { HandleAllInboxMessages(); }
 
     void PerformTask(MessagerNodeTask::Task);

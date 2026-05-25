@@ -8,15 +8,16 @@
 #include "message.h"
 
 
-class MessageBox
-{
-private:
-    std::mutex queue_mutex;
-    std::queue<std::pair<node_id_t, Message>> queue;
-public:
-    void AddMsg(node_id_t node_id, Message msg);
-    std::optional<std::pair<node_id_t, Message>> PopMsg();
+struct Inbox{
+    std::vector<std::vector<Message>> per_neighbor_inbox{};
+    node_id_t cur_inbox_idx{};
+    node_id_t inbox_msg_idx{};
+
+    void ReserveInbox(node_id_t num_neighbors);
+    void AddNeighborInbox();
+    void AddMsg(node_id_t node_idx, Message msg);
+    void ResetIndexes();
     void Clear();
-    bool IsEmpty();
-    ~MessageBox() = default;
+    std::optional<std::pair<node_id_t, Message>> PopMsg();
+    bool IsEmpty() const;
 };

@@ -49,6 +49,6 @@ public:
 
     virtual bool RunCycle();
 
-    virtual void TransferPendingMessages();
+    // virtual void TransferPendingMessages();
     bool AreMessagesPending();
 };

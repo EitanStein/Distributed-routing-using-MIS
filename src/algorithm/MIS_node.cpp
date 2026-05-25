@@ -10,7 +10,7 @@ MIS_Node::~MIS_Node() = default;
 
 void MIS_Node::AddEdge(Node* other)
 {
-    Node::AddEdge(other);
+    MessagerNode::AddEdge(other);
     active_MIS_building_neighbors[other->GetID()] = static_cast<MIS_Node*>(other);
 }
 
@@ -24,7 +24,7 @@ void MIS_Node::MISBuildingBroadcast(Message msg)
 {
     for(auto target : std::views::keys(active_MIS_building_neighbors))
     {
-        AddOutboxMsg(target, msg);
+        SendMsg(target, msg);
     }
 }
 
@@ -77,14 +77,16 @@ void MIS_Node::HandleMsg([[maybe_unused]] node_id_t sender, Message msg)
     node_id_t recipient_MIS_node = msg.router_to_recipient.value();
     if(recipient_MIS_node == id)
     {
-        AddOutboxMsg(msg_recipient, std::move(msg));
+        LOG_DEBUG("final message routing - from ({}) to ({})", id, recipient_MIS_node);
+        SendMsg(msg_recipient, std::move(msg));
         return;
     }
 
     if(path_table_to_MIS_nodes.contains(recipient_MIS_node))
     {
         MIS_Node* mis_node_ptr = path_table_to_MIS_nodes.at(recipient_MIS_node);
-        AddOutboxMsg(mis_node_ptr->GetID(), std::move(msg));
+        LOG_DEBUG("regular message routing - from ({}) to ({})", id, mis_node_ptr->GetID());
+        SendMsg(mis_node_ptr->GetID(), std::move(msg));
     }
     else
     {
@@ -138,7 +140,7 @@ void MIS_Node::PostMISBroadacst()
         return;
     }  
 
-    while(std::optional<std::pair<node_id_t, Message>> optional_msg = inbox.PopMsg()) // TODO check that move works here
+    while(std::optional<std::pair<node_id_t, Message>> optional_msg = ReadMsgFromInbox()) // TODO check that move works here
     {
         auto [src, msg] = std::move(optional_msg.value());
 
@@ -157,7 +159,7 @@ void MIS_Node::PostPathTableBroadacst()
 {
     new_entries_to_path_table.clear();
 
-    while(std::optional<std::pair<node_id_t, Message>> optional_msg = inbox.PopMsg()) // TODO check that move works here
+    while(std::optional<std::pair<node_id_t, Message>> optional_msg = ReadMsgFromInbox()) // TODO check that move works here
     {
         auto [src, msg] = std::move(optional_msg.value());
         node_id_t MIS_id = std::get<node_id_t>(msg.msg);
@@ -207,6 +209,8 @@ void MIS_Node::PreCycle()
 
 void MIS_Node::PostCycle()
 {
+    inbox.ResetIndexes();
+
     if(stage == INIT)
         return;
 

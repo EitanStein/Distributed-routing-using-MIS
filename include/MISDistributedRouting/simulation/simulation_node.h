@@ -20,5 +20,7 @@ public:
 
     void Draw(sf::RenderWindow& window);
 
-    void SendAllOutboxMessages() override;
+    // void SendAllOutboxMessages() override;
+    void PreCycle() override;
+    void SendMsg(MessagerNode* dest, Message msg) override;
 };
