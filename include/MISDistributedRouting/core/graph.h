@@ -51,4 +51,5 @@ public:
 
     // virtual void TransferPendingMessages();
     bool AreMessagesPending();
+    void ChangeNodesPhase();
 };

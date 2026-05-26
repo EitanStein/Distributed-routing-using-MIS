@@ -77,7 +77,7 @@ void MIS_Node::HandleMsg([[maybe_unused]] node_id_t sender, Message msg)
     node_id_t recipient_MIS_node = msg.router_to_recipient.value();
     if(recipient_MIS_node == id)
     {
-        LOG_DEBUG("final message routing - from ({}) to ({})", id, recipient_MIS_node);
+        LOG_DEBUG("final message routing - from ({}) to ({})", id, msg_recipient);
         SendMsg(msg_recipient, std::move(msg));
         return;
     }
@@ -175,42 +175,33 @@ void MIS_Node::PostPathTableBroadacst()
 
 void MIS_Node::PreCycle()
 {
-    if(stage == INIT)
-        return;
-
-    // regular msg
-    if(stage == COMPLETE)
-    {
-        return;
-    }
-
-    if(stage == MIS_BUILDING)
-    {
-        if (my_MIS != nullptr)
-        {
-            rand_num = 0;
+    switch(stage){
+        case INIT:
             return;
-        }
+        case COMPLETE:
+            break;
+        case MIS_BUILDING:
+            if (my_MIS != nullptr)
+            {
+                rand_num = 0;
+                break;
+            }
 
-        if(isRandNumMISCycle)
-            MISBroadcast();
-        else
-            BroadcastMISStatus();
-        return;
+            if(isRandNumMISCycle)
+                MISBroadcast();
+            else
+                BroadcastMISStatus();
+            break;
+        case PATH_BUILDING:
+            BuildPathTableBroadacst();
+            break;
+        default:
+            break;
     }
-
-    if(stage == PATH_BUILDING)
-    {
-        BuildPathTableBroadacst();
-        return;
-    }
-
 }
 
 void MIS_Node::PostCycle()
 {
-    inbox.ResetIndexes();
-
     if(stage == INIT)
         return;
 

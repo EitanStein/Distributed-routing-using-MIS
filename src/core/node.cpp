@@ -115,6 +115,13 @@ bool MessagerNode::IsInboxEmpty() const{
     return inbox.IsEmpty();
 }
 
+void MessagerNode::ChangePhase() { // TODO change
+    inbox.ChangePhase();
+}
+
+void MessagerNode::PreCycle() {}
+void MessagerNode::PostCycle() { HandleAllInboxMessages(); }
+
 // void MessagerNode::SendAllOutboxMessages()
 // {
 //     while(std::optional<std::pair<node_id_t, Message>> optional_msg = outbox.PopMsg())

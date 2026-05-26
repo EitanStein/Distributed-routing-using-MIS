@@ -1,22 +1,24 @@
 #pragma once
 
-#include <thread>
-#include <queue>
 #include <optional>
-#include <mutex>
+#include <array>
+#include <vector>
 
 #include "message.h"
 
-
 struct Inbox{
-    std::vector<std::vector<Message>> per_neighbor_inbox{};
+    std::array<std::vector<std::vector<Message>>, 2> buffers{};
+
+    int read_buffer_index{0};
+    int write_buffer_index{1};
+
     node_id_t cur_inbox_idx{};
     node_id_t inbox_msg_idx{};
 
     void ReserveInbox(node_id_t num_neighbors);
     void AddNeighborInbox();
     void AddMsg(node_id_t node_idx, Message msg);
-    void ResetIndexes();
+    void ChangePhase();
     void Clear();
     std::optional<std::pair<node_id_t, Message>> PopMsg();
     bool IsEmpty() const;

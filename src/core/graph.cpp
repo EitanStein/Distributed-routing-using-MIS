@@ -117,13 +117,21 @@ void SyncedGraph::PostCycleAllNodes()
 
 #include <cstdio>
 #include <iostream>
-#include <format>
+#include <format> // TODO remove
+
+void SyncedGraph::ChangeNodesPhase(){
+    for (auto& node : nodes){
+        static_cast<MessagerNode*>(node.get())->ChangePhase();
+    }
+}
 
 bool SyncedGraph::RunCycle()
 {
     // ZoneScopedN("Cycle"); //TODO handle tracy scoped N
     
     PreCycleAllNodes();
+
+    ChangeNodesPhase();
 
     bool are_messages_pending = AreMessagesPending();
     // TransferPendingMessages();

@@ -56,10 +56,11 @@ public:
     virtual void SendMsg(MessagerNode* dest, Message msg);
     void Broadcast(Message msg);
 
-    virtual void PreCycle() {}
+    virtual void PreCycle();
     // virtual void SendAllOutboxMessages();
-    virtual void PostCycle() { HandleAllInboxMessages(); }
+    virtual void PostCycle();
 
     void PerformTask(MessagerNodeTask::Task);
+    void ChangePhase();
 };
 

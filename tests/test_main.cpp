@@ -53,8 +53,8 @@ public:
         return false;
     }
 
-    void ResetInboxIndexes(){
-        inbox.ResetIndexes();
+    void updateInboxPhase(){
+        inbox.ChangePhase();
     }
 };
 
@@ -90,23 +90,24 @@ public:
 
     std::optional<std::pair<node_id_t, Message>> GetMessageFromNode(node_id_t node_id)
     {
-        GetNode(node_id)->ResetInboxIndexes();
         return GetNode(node_id)->ReadMsgFromInbox();
     }
 
+    // assumes only a single message in the graph
     void HandleOneMessage(){
         size_t graph_size = GetGraphSize();
         for(node_id_t id=0; id < graph_size ; ++id)
         {
-            GetNode(id)->ResetInboxIndexes();
             if(GetNode(id)->IsInboxEmpty())
                 continue;
             std::optional<std::pair<node_id_t, Message>> msg_from_inbox = GetNode(id)->ReadMsgFromInbox();
 
             GetNode(id)->HandleMsg(msg_from_inbox.value().first, std::move(msg_from_inbox.value().second));
             GetNode(id)->ReadMsgFromInbox();
-            return;
+            break;
         }
+
+        ChangeNodesPhase();
     }
 
     void ReadMsgFromInboxOnAll()
@@ -148,7 +149,6 @@ public:
 
 
 void ensure_logger_initialized() {
-    // This block will execute exactly once, the first time this function is called
     [[maybe_unused]] static bool initialized = []() {
         INIT_LOGGER();
         return true;
