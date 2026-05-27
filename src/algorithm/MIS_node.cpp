@@ -140,11 +140,11 @@ void MIS_Node::HandleMISBuildingMessages()
         return;
     }  
 
-    while(std::optional<std::pair<node_id_t, Message>> optional_msg = ReadMsgFromInbox()) // TODO check that move works here
+    while(auto optional_msg = ReadMsgFromInbox())
     {
-        auto [src, msg] = std::move(optional_msg.value());
-
-        HandleMISBuildingMsg(src, std::move(msg));
+        std::apply([this](auto&&... args) {
+            this->HandleMISBuildingMsg(std::forward<decltype(args)>(args)...);
+        },std::move(*optional_msg));
     }
 }
 
