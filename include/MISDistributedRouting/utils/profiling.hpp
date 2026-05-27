@@ -4,4 +4,5 @@
     #include "tracy/Tracy.hpp"
 #else
     #define ZoneScoped
+    #define ZoneScopedN // TODO handle properly
 #endif

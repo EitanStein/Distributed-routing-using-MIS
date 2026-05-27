@@ -1,5 +1,6 @@
 #include "MISDistributedRouting/core/graph.h"
 #include "MISDistributedRouting/utils/log_macros.h"
+#include "MISDistributedRouting/utils/profiling.hpp"
 
 #include <ranges>
 #include <random>
@@ -70,66 +71,46 @@ MessagerNode* SyncedGraph::GetNode(node_id_t node_id) const
     return static_cast<MessagerNode*>(Graph::GetNode(node_id));
 }
 
-void SyncedGraph::TransferPendingMessages()
-{
-    size_t graph_size = GetGraphSize();
-    for(node_id_t id=0; id < graph_size ; ++id)
-    {
-        thread_pool.AddTask(GetNode(id), MessagerNodeTask::Task::SendAllOutboxMessages);
-    }
-
-    thread_pool.WaitForEmptyQueue();
-}
-
 bool SyncedGraph::AreMessagesPending()
 {
     size_t graph_size = GetGraphSize();
     for(node_id_t id=0; id < graph_size ; ++id)
     {
-        if(!GetNode(id)->IsOutboxEmpty())
+        if(!GetNode(id)->IsInboxEmpty())
             return true;
     }
     return false;
 }
 
-
-void SyncedGraph::PreCycleAllNodes()
-{
-    size_t graph_size = GetGraphSize();
-    for(node_id_t id=0; id < graph_size ; ++id)
-    {
-        thread_pool.AddTask(GetNode(id), MessagerNodeTask::Task::PreCycle);
-    }
-
-    WaitForInactiveThreadPool();
-}
-
-
-void SyncedGraph::PostCycleAllNodes()
-{
-    size_t graph_size = GetGraphSize();
-    for(node_id_t id=0; id < graph_size ; ++id)
-    {
-        thread_pool.AddTask(GetNode(id), MessagerNodeTask::Task::PostCycle);
-    }
-
-    WaitForInactiveThreadPool();
-}
-
 #include <cstdio>
 #include <iostream>
-#include <format>
+#include <format> // TODO remove
+
+
+void SyncedGraph::RunAllNodesCycle(){
+    size_t graph_size = GetGraphSize();
+    for(node_id_t id=0; id < graph_size ; ++id)
+    {
+        thread_pool.AddTask(GetNode(id));
+    }
+
+    WaitForInactiveThreadPool();
+}
+void SyncedGraph::RunAllNodesPostCycle(){
+    for (auto& node : nodes){
+        static_cast<MessagerNode*>(node.get())->UpdatePhase();
+    }
+}
+
 
 bool SyncedGraph::RunCycle()
 {
+    // ZoneScopedN("Cycle"); //TODO handle tracy scoped N
     
-    PreCycleAllNodes();
+    RunAllNodesCycle();
+    RunAllNodesPostCycle();
 
     bool are_messages_pending = AreMessagesPending();
-
-    TransferPendingMessages();
-
-    PostCycleAllNodes();
 
     return !are_messages_pending;
 }

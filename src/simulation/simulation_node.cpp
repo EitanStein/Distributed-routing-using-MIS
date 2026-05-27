@@ -29,25 +29,23 @@ bool SimulationNode::Contains(const sf::Vector2f& point) const
     return shape.getGlobalBounds().contains(point);
 }
 
+// void SimulationNode::SendAllOutboxMessages()
+// {
+//     is_sending_msg = false;
+//     while(std::optional<std::pair<node_id_t, Message>> optional_msg = outbox.PopMsg())
+//     {
+//         auto [target, msg] = std::move(*optional_msg);
+//         MessagerNode* target_ptr = GetNeighbor(target);
+//         if(target_ptr == nullptr)
+//         {
+//             LOG_ERROR("Outbox message from {} to nonexistent neighbor {}", id, target);
+//             continue;
+//         }
 
-void SimulationNode::SendAllOutboxMessages()
-{
-    is_sending_msg = false;
-    while(std::optional<std::pair<node_id_t, Message>> optional_msg = outbox.PopMsg())
-    {
-        auto [target, msg] = std::move(*optional_msg);
-        MessagerNode* target_ptr = GetNeighbor(target);
-        if(target_ptr == nullptr)
-        {
-            LOG_ERROR("Outbox message from {} to nonexistent neighbor {}", id, target);
-            continue;
-        }
-
-        is_sending_msg = true;
-        target_ptr->AddInboxMsg(this->id, std::move(msg));
-    } 
-}
-
+//         is_sending_msg = true;
+//         target_ptr->AddInboxMsg(this->id, std::move(msg));
+//     } 
+// }
 
 void SimulationNode::Draw(sf::RenderWindow& window)
 {
@@ -59,4 +57,19 @@ void SimulationNode::Draw(sf::RenderWindow& window)
         shape.setFillColor(COLORS::REGULAR_NODE);
     
     window.draw(shape);
+}
+
+
+void SimulationNode::HandleAllInboxMessages()
+{
+    is_sending_msg = false;
+    MIS_Node::HandleAllInboxMessages();
+}
+
+void SimulationNode::SendMsg(MessagerNode* dest, Message msg)
+{
+    if(dest != nullptr)
+        is_sending_msg = true;
+
+    MIS_Node::SendMsg(dest, std::move(msg));
 }

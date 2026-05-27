@@ -5,7 +5,7 @@
 int main()
 {
     INIT_LOGGER();
-    ZoneScoped;
+
     Simulator sim;
 
     sim.Run();

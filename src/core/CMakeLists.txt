@@ -2,6 +2,7 @@ add_library(core_module
     graph.cpp
     node.cpp
     message_box.cpp
+    thread_pool.cpp
 )
 
 target_link_libraries(core_module
@@ -10,6 +11,11 @@ target_link_libraries(core_module
         spdlog::spdlog
         Threads::Threads
 )
+
+if(TRACY_ENABLE)
+    target_link_libraries(core_module PRIVATE Tracy::TracyClient)
+    target_compile_definitions(core_module PRIVATE TRACY_ENABLE)
+endif()
 
 target_include_directories(core_module
     PUBLIC

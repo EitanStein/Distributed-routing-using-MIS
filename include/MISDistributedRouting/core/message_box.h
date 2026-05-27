@@ -1,22 +1,26 @@
 #pragma once
 
-#include <thread>
-#include <queue>
 #include <optional>
-#include <mutex>
+#include <array>
+#include <vector>
 
 #include "message.h"
 
+// TODO consider a bitset per buffer that marks where messages were accepted - potentially faster to check if empty
+struct Inbox{
+    std::array<std::vector<std::vector<Message>>, 2> buffers{};
 
-class MessageBox
-{
-private:
-    std::mutex queue_mutex;
-    std::queue<std::pair<node_id_t, Message>> queue;
-public:
-    void AddMsg(node_id_t node_id, Message msg);
-    std::optional<std::pair<node_id_t, Message>> PopMsg();
+    int read_buffer_index{0};
+    int write_buffer_index{1};
+
+    node_id_t cur_inbox_idx{};
+    node_id_t inbox_msg_idx{};
+
+    void ReserveInbox(node_id_t num_neighbors);
+    void AddNeighborInbox();
+    void AddMsg(node_id_t node_idx, Message msg);
+    void ChangePhase();
     void Clear();
-    bool IsEmpty();
-    ~MessageBox() = default;
+    std::optional<std::pair<node_id_t, Message>> PopMsg();
+    bool IsEmpty() const;
 };

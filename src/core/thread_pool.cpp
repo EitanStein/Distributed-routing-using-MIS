@@ -1,5 +1,5 @@
-#include "MISDistributedRouting/utils/thread_pool.h"
-
+#include "MISDistributedRouting/core/thread_pool.h"
+#include "MISDistributedRouting/utils/profiling.hpp"
 #include "MISDistributedRouting/core/node.h"
 #include <ranges>
 
@@ -47,10 +47,11 @@ bool ThreadPool::IsTaskQueueEmpty()
 
 
 
-void ThreadPool::AddTask(MessagerNode* node_ptr, MessagerNodeTask::Task task)
+void ThreadPool::AddTask(MessagerNode* node_ptr)
 {
+    // ZoneScopedN("AddTask");
     std::unique_lock<std::mutex> lock(queue_lock);
-    task_queue.emplace(node_ptr, task);
+    task_queue.emplace(node_ptr);
     queue_cv.notify_one();
 }
 
@@ -64,10 +65,10 @@ void ThreadPool::WaitForEmptyQueue()
 
 void ThreadPool::ThreadLoop(std::stop_token stoken)
 {
+    // ZoneScopedN("ThreadLoop");
+    MessagerNode* node_ptr = nullptr;
     while (!stoken.stop_requested())
     {
-        MessagerNode* node_ptr = nullptr;
-        MessagerNodeTask::Task task;
         {
             std::unique_lock<std::mutex> lock(queue_lock);
             queue_cv.wait(lock, stoken, [this](){
@@ -78,12 +79,11 @@ void ThreadPool::ThreadLoop(std::stop_token stoken)
                 return;
 
             ++num_active_tasks;
-            node_ptr = task_queue.front().first;
-            task = task_queue.front().second;
+            node_ptr = task_queue.front();
             task_queue.pop();
             
         }
-        node_ptr->PerformTask(task);
+        node_ptr->RunPhase();
 
         {
             std::unique_lock<std::mutex> lock(queue_lock);
