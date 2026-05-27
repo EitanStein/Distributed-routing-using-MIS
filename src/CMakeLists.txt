@@ -13,7 +13,6 @@ target_link_libraries(MISDistributedRouting
     PRIVATE
         project_options
         core_module
-        utils_module
         logging_module
         MIS_algo_module
         simulation_module

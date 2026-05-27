@@ -91,7 +91,7 @@ void SyncedGraph::RunAllNodesCycle(){
     size_t graph_size = GetGraphSize();
     for(node_id_t id=0; id < graph_size ; ++id)
     {
-        thread_pool.AddTask(GetNode(id), MessagerNodeTask::Task::PostCycle); // TODO change tasks (remove and dedicate thread pool as graph thread pool)
+        thread_pool.AddTask(GetNode(id));
     }
 
     WaitForInactiveThreadPool();

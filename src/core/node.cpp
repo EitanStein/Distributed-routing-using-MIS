@@ -117,7 +117,7 @@ bool MessagerNode::IsInboxEmpty() const{
     return inbox.IsEmpty();
 }
 
-void MessagerNode::Phase() {
+void MessagerNode::RunPhase() {
     HandleAllInboxMessages();
 
     HandleSendingNewMessages();
@@ -125,8 +125,4 @@ void MessagerNode::Phase() {
 
 void MessagerNode::UpdatePhase() {
     inbox.ChangePhase();
-}
-
-void MessagerNode::PerformTask([[maybe_unused]] MessagerNodeTask::Task task){
-    Phase();
 }

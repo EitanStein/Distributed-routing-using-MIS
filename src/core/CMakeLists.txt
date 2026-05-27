@@ -2,6 +2,7 @@ add_library(core_module
     graph.cpp
     node.cpp
     message_box.cpp
+    thread_pool.cpp
 )
 
 target_link_libraries(core_module

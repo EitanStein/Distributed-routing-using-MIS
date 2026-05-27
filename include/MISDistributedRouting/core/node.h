@@ -5,7 +5,7 @@
 #include <functional>
 
 #include "types.h"
-#include "MISDistributedRouting/utils/thread_pool.h"
+#include "thread_pool.h"
 #include "message_box.h"
 
 
@@ -28,10 +28,6 @@ public:
 };
 
 
-namespace MessagerNodeTask{
-    enum class Task {PreCycle=0, PostCycle, NumTasks};
-};
-
 class MessagerNode : public Node
 {
 protected:
@@ -51,15 +47,13 @@ public:
     bool IsInboxEmpty() const;
 
     virtual void HandleAllInboxMessages();
+    virtual void HandleSendingNewMessages();
 
     void SendMsg(node_id_t dest_id, Message msg);
     virtual void SendMsg(MessagerNode* dest, Message msg);
     void Broadcast(Message msg);
 
-    virtual void HandleSendingNewMessages();
-    void Phase();
-
-    void PerformTask([[maybe_unused]] MessagerNodeTask::Task);
+    void RunPhase();
     void UpdatePhase();
 };
 
