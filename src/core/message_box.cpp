@@ -30,7 +30,7 @@ void Inbox::ChangePhase(){
     inbox_msg_idx = 0;
 }
 
-
+// TODO consider clearing only one buffer or have a clear function per buffer
 void Inbox::Clear(){
     for(auto& per_neighbor_inbox : buffers){
         for(auto& neighbor_inbox : per_neighbor_inbox)

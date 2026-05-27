@@ -6,6 +6,7 @@
 
 #include "message.h"
 
+// TODO consider a bitset per buffer that marks where messages were accepted - potentially faster to check if empty
 struct Inbox{
     std::array<std::vector<std::vector<Message>>, 2> buffers{};
 
