@@ -18,7 +18,6 @@ void Node::AddEdge(Node* other)
 
 std::optional<node_id_t> Node::GetNeighborIdxFromId(node_id_t id) const{
     auto target = id_based_neighbors_map.find(id);
-    // TODO add assume? c++23 and maybe use std::expect (also c++23)
     if(target == id_based_neighbors_map.end())
     {
         LOG_ERROR("node {} does not have a neighbor {}", this->id, id);
@@ -73,7 +72,6 @@ void MessagerNode::SendMsg(node_id_t target_id, Message msg)
 void MessagerNode::AddInboxMsg(node_id_t src_id, Message msg)
 {
     auto opt_idx = GetNeighborIdxFromId(src_id);
-    // TODO add assume -? [[assume(opt_idx.has_value() == true)]]
     if(opt_idx)
         inbox.AddMsg(opt_idx.value(), std::move(msg));
 }

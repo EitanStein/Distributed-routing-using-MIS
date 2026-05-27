@@ -10,7 +10,7 @@
 #include <atomic>
 #include "types.h"
 
-// TODO use template
+
 class ThreadPool
 {
 private:

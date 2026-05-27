@@ -159,7 +159,7 @@ void MIS_Node::BuildPathTableBroadacst()
 
 void MIS_Node::HandlePathBuildingMessages()
 {
-    while(std::optional<std::pair<node_id_t, Message>> optional_msg = ReadMsgFromInbox()) // TODO check that move works here
+    while(std::optional<std::pair<node_id_t, Message>> optional_msg = ReadMsgFromInbox())
     {
         auto [src, msg] = std::move(optional_msg.value());
         node_id_t MIS_id = std::get<node_id_t>(msg.msg);
