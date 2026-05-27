@@ -5,7 +5,7 @@
 
 
 MIS_Node::MIS_Node(node_id_t id, ThreadPool* pool): MessagerNode(id, pool), rng(std::random_device{}()), rand_num(0), is_MIS(false), 
-                                                 my_MIS(nullptr), stage(INIT), isRandNumMISCycle(true) {}
+                                                 my_MIS(nullptr), stage(INIT), isRandNumMISCycle(false) {}
 MIS_Node::~MIS_Node() = default;
 
 void MIS_Node::AddEdge(Node* other)
@@ -90,7 +90,7 @@ void MIS_Node::HandleMsg([[maybe_unused]] node_id_t sender, Message msg)
     }
     else
     {
-        LOG_ERROR("regular message - target ({}) MIS node ({}) is not in path table", recipient_MIS_node, msg_recipient);
+        LOG_ERROR("regular message - target's ({}) MIS node ({}) is not in node {} path table", recipient_MIS_node, msg_recipient, id);
     }
 
 }
@@ -132,7 +132,7 @@ void MIS_Node::BroadcastMISStatus()
     }
 }
 
-void MIS_Node::PostMISBroadacst()
+void MIS_Node::HandleMISBuildingMessages()
 {
     if(my_MIS != nullptr)
     {
@@ -153,12 +153,12 @@ void MIS_Node::BuildPathTableBroadacst()
 {
     for(node_id_t MIS_id : new_entries_to_path_table)
         Broadcast(Message(MIS_id));
+
+    new_entries_to_path_table.clear();
 }
 
-void MIS_Node::PostPathTableBroadacst()
+void MIS_Node::HandlePathBuildingMessages()
 {
-    new_entries_to_path_table.clear();
-
     while(std::optional<std::pair<node_id_t, Message>> optional_msg = ReadMsgFromInbox()) // TODO check that move works here
     {
         auto [src, msg] = std::move(optional_msg.value());
@@ -172,57 +172,40 @@ void MIS_Node::PostPathTableBroadacst()
     }
 }
 
-
-void MIS_Node::PreCycle()
-{
+void MIS_Node::HandleAllInboxMessages(){
     switch(stage){
         case INIT:
             return;
         case COMPLETE:
-            break;
+            MessagerNode::HandleAllInboxMessages();
+            return;
         case MIS_BUILDING:
-            if (my_MIS != nullptr)
-            {
-                rand_num = 0;
-                break;
-            }
+            HandleMISBuildingMessages();
+            return;
+        case PATH_BUILDING:
+            HandlePathBuildingMessages();
+            return;
+        default:
+            LOG_ERROR("invalid MIS node stage: {}", int(stage));
+    }
+}
 
+void MIS_Node::HandleSendingNewMessages(){
+    switch(stage){
+        case INIT:
+        case COMPLETE:
+            return;
+        case MIS_BUILDING:
+            isRandNumMISCycle = !isRandNumMISCycle;
             if(isRandNumMISCycle)
                 MISBroadcast();
             else
                 BroadcastMISStatus();
-            break;
+            return;
         case PATH_BUILDING:
             BuildPathTableBroadacst();
-            break;
+            return;
         default:
-            break;
+            LOG_ERROR("invalid MIS node stage: {}", int(stage));
     }
-}
-
-void MIS_Node::PostCycle()
-{
-    if(stage == INIT)
-        return;
-
-    // regular msg
-    if(stage == COMPLETE)
-    {
-        HandleAllInboxMessages();
-        return;
-    }
-
-    if(stage == MIS_BUILDING)
-    {
-        PostMISBroadacst();
-
-        isRandNumMISCycle = !isRandNumMISCycle;
-        return;
-    }
-
-    if(stage == PATH_BUILDING)
-    {
-        PostPathTableBroadacst();
-        return;
-    }
-}
+} 

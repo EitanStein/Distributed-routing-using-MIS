@@ -34,10 +34,10 @@ protected:
 
     void MISBroadcast();
     void BroadcastMISStatus();
-    void PostMISBroadacst();
+    void HandleMISBuildingMessages();
 
     void BuildPathTableBroadacst();
-    void PostPathTableBroadacst();
+    void HandlePathBuildingMessages();
 public:
     MIS_Node(node_id_t id, ThreadPool* pool);
     ~MIS_Node();
@@ -48,9 +48,8 @@ public:
     node_id_t GetMyMISID() const {return my_MIS->GetID();}
 
     void HandleMsg([[maybe_unused]] node_id_t sender, Message msg) override;
-
-    void PreCycle() override;
-    void PostCycle() override;
+    void HandleAllInboxMessages() override;
+    void HandleSendingNewMessages() override;
 
     void AdvanceStage() { if (stage < COMPLETE) stage = static_cast<MIS_Stage>(static_cast<int>(stage) + 1);}
 };

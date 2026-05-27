@@ -19,8 +19,7 @@ public:
     bool Contains(const sf::Vector2f& point) const;
 
     void Draw(sf::RenderWindow& window);
+    void HandleAllInboxMessages() override;
 
-    // void SendAllOutboxMessages() override;
-    void PreCycle() override;
     void SendMsg(MessagerNode* dest, Message msg) override;
 };

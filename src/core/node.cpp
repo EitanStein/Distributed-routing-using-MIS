@@ -73,6 +73,7 @@ void MessagerNode::SendMsg(node_id_t target_id, Message msg)
 void MessagerNode::AddInboxMsg(node_id_t src_id, Message msg)
 {
     auto opt_idx = GetNeighborIdxFromId(src_id);
+    // TODO add assume -? [[assume(opt_idx.has_value() == true)]]
     if(opt_idx)
         inbox.AddMsg(opt_idx.value(), std::move(msg));
 }
@@ -110,46 +111,22 @@ void MessagerNode::HandleAllInboxMessages()
     }
 }
 
+void MessagerNode::HandleSendingNewMessages() {}
 
 bool MessagerNode::IsInboxEmpty() const{
     return inbox.IsEmpty();
 }
 
-void MessagerNode::ChangePhase() { // TODO change
+void MessagerNode::Phase() {
+    HandleAllInboxMessages();
+
+    HandleSendingNewMessages();
+}
+
+void MessagerNode::UpdatePhase() {
     inbox.ChangePhase();
 }
 
-void MessagerNode::PreCycle() {}
-void MessagerNode::PostCycle() { HandleAllInboxMessages(); }
-
-// void MessagerNode::SendAllOutboxMessages()
-// {
-//     while(std::optional<std::pair<node_id_t, Message>> optional_msg = outbox.PopMsg())
-//     {
-//         auto [target, msg] = std::move(*optional_msg);
-//         MessagerNode* target_ptr = GetNeighbor(target);
-//         if(target_ptr == nullptr)
-//         {
-//             LOG_ERROR("Outbox message from {} to nonexistent neighbor {}", id, target);
-//             continue;
-//         }
-
-//         target_ptr->AddInboxMsg(this->id, std::move(msg));
-//     } 
-// }
-
-void MessagerNode::PerformTask(MessagerNodeTask::Task task){
-    switch(task){
-        case MessagerNodeTask::Task::PreCycle:
-            PreCycle();
-            break;
-        // case MessagerNodeTask::Task::SendAllOutboxMessages:
-        //     SendAllOutboxMessages();
-        //     break;
-        case MessagerNodeTask::Task::PostCycle:
-            PostCycle();
-            break;
-        default:
-            LOG_ERROR("Can't perform task of type 'NumTasks'");
-    }
+void MessagerNode::PerformTask([[maybe_unused]] MessagerNodeTask::Task task){
+    Phase();
 }

@@ -48,19 +48,18 @@ public:
     
     void AddInboxMsg(node_id_t from_id, Message msg);
     std::optional<std::pair<node_id_t, Message>> ReadMsgFromInbox();
-    void HandleAllInboxMessages();
-
     bool IsInboxEmpty() const;
+
+    virtual void HandleAllInboxMessages();
 
     void SendMsg(node_id_t dest_id, Message msg);
     virtual void SendMsg(MessagerNode* dest, Message msg);
     void Broadcast(Message msg);
 
-    virtual void PreCycle();
-    // virtual void SendAllOutboxMessages();
-    virtual void PostCycle();
+    virtual void HandleSendingNewMessages();
+    void Phase();
 
-    void PerformTask(MessagerNodeTask::Task);
-    void ChangePhase();
+    void PerformTask([[maybe_unused]] MessagerNodeTask::Task);
+    void UpdatePhase();
 };
 

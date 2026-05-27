@@ -60,10 +60,10 @@ void SimulationNode::Draw(sf::RenderWindow& window)
 }
 
 
-void SimulationNode::PreCycle() 
+void SimulationNode::HandleAllInboxMessages()
 {
     is_sending_msg = false;
-    MIS_Node::PreCycle();
+    MIS_Node::HandleAllInboxMessages();
 }
 
 void SimulationNode::SendMsg(MessagerNode* dest, Message msg)

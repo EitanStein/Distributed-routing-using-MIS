@@ -34,8 +34,8 @@ class SyncedGraph : public Graph
 protected:
     ThreadPool thread_pool;
 
-    void PreCycleAllNodes();
-    void PostCycleAllNodes();
+    void RunAllNodesCycle();
+    void RunAllNodesPostCycle();
 
     void WaitForInactiveThreadPool();
 public:
@@ -49,7 +49,5 @@ public:
 
     virtual bool RunCycle();
 
-    // virtual void TransferPendingMessages();
     bool AreMessagesPending();
-    void ChangeNodesPhase();
 };
