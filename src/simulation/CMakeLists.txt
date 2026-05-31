@@ -13,7 +13,7 @@ target_link_libraries(simulation_module
         MIS_algo_module
     PRIVATE
         project_options
-        spdlog::spdlog
+        logging_module
         SFML::Graphics
         SFML::Window
 )

@@ -5,6 +5,7 @@ add_library(logging_module
 target_link_libraries(logging_module
     PRIVATE
         project_options
+    PUBLIC
         spdlog::spdlog
 )
 

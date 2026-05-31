@@ -172,17 +172,10 @@ public:
 };
 
 
-void ensure_logger_initialized() {
-    [[maybe_unused]] static bool initialized = []() {
-        INIT_LOGGER();
-        return true;
-    }();
-}
-
 
 TEST_CASE("Graph creation no self neighbors check", "")
 {
-    ensure_logger_initialized();
+    INIT_LOGGER();
 
     TestGraph graph;
     graph.InitGraph(100);
@@ -193,7 +186,7 @@ TEST_CASE("Graph creation no self neighbors check", "")
 
 TEST_CASE("MIS Creation check1", "")
 {
-    ensure_logger_initialized();
+    INIT_LOGGER();
     TestGraph graph;
 
     graph.AddNode(1, 1);
@@ -209,7 +202,7 @@ TEST_CASE("MIS Creation check1", "")
 
 TEST_CASE("MIS Creation check2", "")
 {
-    ensure_logger_initialized();
+    INIT_LOGGER();
     TestGraph graph;
 
     graph.AddNode(0, 0);
@@ -227,7 +220,7 @@ TEST_CASE("MIS Creation check2", "")
 
 TEST_CASE("MIS Creation check3", "")
 {
-    ensure_logger_initialized();
+    INIT_LOGGER();
     TestGraph graph;
     graph.InitGraph(100);
 
@@ -239,7 +232,7 @@ TEST_CASE("MIS Creation check3", "")
 
 TEST_CASE("Check sending message1", "")
 {
-    ensure_logger_initialized();
+    INIT_LOGGER();
     TestGraph graph;
     
     graph.AddNode(0, 0);
@@ -272,7 +265,7 @@ TEST_CASE("Check sending message1", "")
 
 TEST_CASE("Check sending message2", "")
 {
-    ensure_logger_initialized();
+    INIT_LOGGER();
     TestGraph graph;
     
     graph.AddNode(1, 1);
@@ -308,7 +301,7 @@ TEST_CASE("Check sending message2", "")
 
 TEST_CASE("Check sending message on random graph", "")
 {
-    ensure_logger_initialized();
+    INIT_LOGGER();
     const double GRAPH_WIDTH = 10;
     TestGraph graph(std::thread::hardware_concurrency(), GRAPH_WIDTH);
     graph.InitGraph(300);
@@ -335,7 +328,7 @@ TEST_CASE("Check sending message on random graph", "")
 
 TEST_CASE("Check sending message to self", "")
 {
-    ensure_logger_initialized();
+    INIT_LOGGER();
     TestGraph graph;
     
     graph.AddNode(1, 1);

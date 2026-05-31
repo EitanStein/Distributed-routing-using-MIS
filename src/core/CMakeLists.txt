@@ -8,7 +8,7 @@ add_library(core_module
 target_link_libraries(core_module
     PRIVATE
         project_options
-        spdlog::spdlog
+        logging_module
         Threads::Threads
 )
 

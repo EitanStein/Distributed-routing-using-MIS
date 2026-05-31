@@ -8,7 +8,7 @@ target_link_libraries(MIS_algo_module
         core_module
     PRIVATE
         project_options
-        spdlog::spdlog
+        logging_module
 )
 
 target_include_directories(MIS_algo_module

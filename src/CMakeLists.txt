@@ -16,7 +16,6 @@ target_link_libraries(MISDistributedRouting
         logging_module
         MIS_algo_module
         simulation_module
-        spdlog::spdlog
         SFML::Graphics 
         SFML::Window    
 )

@@ -12,7 +12,6 @@ target_link_libraries(tests
         logging_module
         MIS_algo_module
         simulation_module
-        spdlog::spdlog
         Catch2::Catch2WithMain
         SFML::Graphics 
         SFML::Window
