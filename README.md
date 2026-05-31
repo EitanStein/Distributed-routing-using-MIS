@@ -39,7 +39,7 @@ values that can be changed are
 
 
 ## Project status
-This is a learning project and is not under development at the moment.
+This is a learning project and is under devlopment (currently attempting to optimize it).
 
 ## Notes on design
 Some of the design choices were in order to get more familiar with certain C++/CMAKE features
