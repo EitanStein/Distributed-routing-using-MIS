@@ -21,3 +21,6 @@ Makefile
 
 
 .vscode/
+
+# benchmarking results
+results.json

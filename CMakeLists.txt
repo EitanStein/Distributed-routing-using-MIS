@@ -47,6 +47,18 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
+if(BUILD_BENCHMARKS)
+    # Disable tests to skip unnecessary dependencies
+    set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+
+    FetchContent_Declare(
+    googlebenchmark
+    GIT_REPOSITORY https://github.com/google/benchmark.git
+    GIT_TAG        192ef10025eb2c4cdd392bc502f0c852196baa48 #1.9.5
+    )
+    FetchContent_MakeAvailable(googlebenchmark)
+endif()
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
@@ -59,3 +71,8 @@ find_package(Threads REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(tests)
+if(BUILD_BENCHMARKS)
+    add_subdirectory(benchmarks)
+endif()
+
+
