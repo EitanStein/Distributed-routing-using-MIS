@@ -184,6 +184,18 @@ TEST_CASE("Graph creation no self neighbors check", "")
 }
 
 
+TEST_CASE("Larger Graph MIS test", "")
+{
+    INIT_LOGGER();
+
+    TestGraph graph;
+    graph.InitGraph(500);
+    graph.InitMIS();
+    REQUIRE(graph.IsMISConsistent());
+    REQUIRE(graph.IsPathTableConsistent());
+}
+
+
 TEST_CASE("MIS Creation check1", "")
 {
     INIT_LOGGER();
