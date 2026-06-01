@@ -48,12 +48,11 @@ MessagerNode* MessagerNode::GetNeighbor(node_id_t id) const
 
 void MessagerNode::AddEdge(Node* other)
 {
-    if(!id_based_neighbors_map.contains(other->GetID()))
-        inbox.AddNeighborInbox();
-    
     Node::AddEdge(other);
+}
 
-    
+void MessagerNode::InitInbox(){
+    inbox.ReserveInbox(neighbors.size());
 }
 
 void MessagerNode::HandleMsg(node_id_t, Message) {}

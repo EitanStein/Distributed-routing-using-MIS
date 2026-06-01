@@ -42,14 +42,6 @@ void Inbox::ReserveInbox(node_id_t num_neighbors){
             per_neighbor_inbox_buffer.emplace_back();
         }
     }
-    
-}
-
-void Inbox::AddNeighborInbox(){
-    buffers[0].emplace_back();
-    buffers[0].back().reserve(2);
-    buffers[1].emplace_back();
-    buffers[1].back().reserve(2);
 }
 
 void Inbox::AddMsg(node_id_t node_idx, Message msg){

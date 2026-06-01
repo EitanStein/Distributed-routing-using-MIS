@@ -33,6 +33,8 @@ class MessagerNode : public Node
 protected:
     ThreadPool* thread_pool;
     Inbox inbox;
+
+    void InitInbox();
 public:
     MessagerNode(node_id_t id, ThreadPool* pool) : Node(id), thread_pool(pool) {}
     ~MessagerNode();

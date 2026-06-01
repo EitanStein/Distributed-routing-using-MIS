@@ -31,7 +31,6 @@ struct Inbox{
     node_id_t inbox_msg_idx{};
 
     void ReserveInbox(node_id_t num_neighbors);
-    void AddNeighborInbox();
     void AddMsg(node_id_t node_idx, Message msg);
     void ChangePhase();
     void Clear();

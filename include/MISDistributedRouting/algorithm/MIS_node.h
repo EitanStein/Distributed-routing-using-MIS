@@ -51,5 +51,5 @@ public:
     void HandleAllInboxMessages() override;
     void HandleSendingNewMessages() override;
 
-    void AdvanceStage() { if (stage < COMPLETE) stage = static_cast<MIS_Stage>(static_cast<int>(stage) + 1);}
+    void AdvanceStage();
 };

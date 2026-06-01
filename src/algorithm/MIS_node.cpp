@@ -209,3 +209,11 @@ void MIS_Node::HandleSendingNewMessages(){
             LOG_ERROR("invalid MIS node stage: {}", int(stage));
     }
 } 
+
+
+void MIS_Node::AdvanceStage() {
+    if(stage == INIT) 
+        InitInbox();
+    if (stage < COMPLETE) 
+        stage = static_cast<MIS_Stage>(static_cast<int>(stage) + 1);
+}
