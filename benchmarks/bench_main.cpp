@@ -25,6 +25,6 @@ static void BM_MIS_building(benchmark::State& state){
 }
 
 
-BENCHMARK(BM_MIS_building)->Arg(10)->Arg(100)->Arg(1000);
+BENCHMARK(BM_MIS_building)->Arg(100)->Arg(500)->Arg(1000)->Arg(2000);
 
 BENCHMARK_MAIN();
