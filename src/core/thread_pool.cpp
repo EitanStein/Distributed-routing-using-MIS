@@ -6,12 +6,13 @@
 
 ThreadPool::ThreadPool(size_t thread_pool_size) : thread_pool_size(thread_pool_size) ,num_active_tasks(0)
 {
-    InitPool();
+    InitPool(1);
 }
 
 
-void  ThreadPool::InitPool()
+void  ThreadPool::InitPool(size_t task_reserve_size)
 {
+    task_queue.allocate_queue(task_reserve_size, nullptr);
     threads.clear();
     threads.reserve(thread_pool_size);
     for(auto _ : std::views::iota(size_t{0}, thread_pool_size))

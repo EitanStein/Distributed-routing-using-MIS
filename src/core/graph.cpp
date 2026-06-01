@@ -51,7 +51,7 @@ SyncedGraph::~SyncedGraph() = default;
 void SyncedGraph::InitGraph(size_t graph_size)
 {
     thread_pool.StopAllThreads();
-    thread_pool.InitPool();
+    thread_pool.InitPool(graph_size);
     Graph::InitGraph(graph_size);
 }
 
