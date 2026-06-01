@@ -51,7 +51,8 @@ jobs:
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_C_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          -DENABLE_SANITIZERS=${{ matrix.use_asan_and_ubsan }}
+          -DENABLE_SANITIZERS=ON
+          -DASAN_UBSAN=${{ matrix.use_asan_and_ubsan }}
           -DBUILD_WITH_TRACY=OFF
 
       - name: Build
