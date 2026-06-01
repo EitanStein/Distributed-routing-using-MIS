@@ -50,8 +50,10 @@ bool ThreadPool::IsTaskQueueEmpty()
 void ThreadPool::AddTask(MessagerNode* node_ptr)
 {
     // ZoneScopedN("AddTask");
+    {
     std::unique_lock<std::mutex> lock(queue_lock);
     task_queue.emplace(node_ptr);
+    }
     queue_cv.notify_one();
 }
 
