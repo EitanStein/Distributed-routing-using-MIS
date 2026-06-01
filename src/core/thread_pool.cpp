@@ -15,7 +15,7 @@ void  ThreadPool::InitPool(size_t task_reserve_size)
     task_queue.allocate_queue(task_reserve_size, nullptr);
     threads.clear();
     threads.reserve(thread_pool_size);
-    for(auto _ : std::views::iota(size_t{0}, thread_pool_size))
+    for([[maybe_unused]] auto _ : std::views::iota(size_t{0}, thread_pool_size))
     {
         threads.emplace_back([this](std::stop_token stoken){ 
             ThreadLoop(stoken); 
