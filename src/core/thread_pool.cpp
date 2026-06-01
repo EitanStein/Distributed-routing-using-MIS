@@ -51,8 +51,8 @@ void ThreadPool::AddTask(MessagerNode* node_ptr)
 {
     // ZoneScopedN("AddTask");
     {
-    std::unique_lock<std::mutex> lock(queue_lock);
-    task_queue.emplace(node_ptr);
+        std::unique_lock<std::mutex> lock(queue_lock);
+        task_queue.emplace(node_ptr);
     }
     queue_cv.notify_one();
 }
@@ -97,6 +97,6 @@ void ThreadPool::ThreadLoop(std::stop_token stoken)
             
         }
         if(node_ptr != nullptr) [[likely]]
-        node_ptr->RunPhase();
+            node_ptr->RunPhase();
     }
 }
