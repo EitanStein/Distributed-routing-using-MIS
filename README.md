@@ -27,8 +27,13 @@ if its own random value is larger than its neighbors - its added to the MIS and 
 
 after the MIS finishes building - each MIS node braodcasts so that each node will know the shortest route to each MIS node
 
-the construction of the MIS takes O(log n) cycles and uses O(mlog n) messages
-the construction of the path table takes O(diam(G)) cycles and uses O(m*size(MIS)) messages
+MIS construction complexity:
+Time: O(log n) cycles
+Messages: O(mlog n)
+
+Path table construction complexity:
+Time: O(diam(G)) cycles
+Messages: O(m*size(MIS))
 
 ## Design choices
 #### Node MessageBox
