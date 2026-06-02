@@ -65,7 +65,7 @@ the nodes locations on the grid are randomized so a graph with 500 nodes is most
 while a graph of size 2k nodes is fully connected and the average degree is ~12
 a graph of size 1k is likely to be fully connected and has an average degree of ~6
 
-![Benchmark Results](./docs/benchmarks.png)
+![Benchmark Results](./docs/benchmarks.png?v=2)
 
 ## future work
 1) further memory optimizations in nodes
