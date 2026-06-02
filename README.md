@@ -59,6 +59,12 @@ I considered using a custom queue using a ring buffer that would mean less memor
 I used tracy, googlebenchmarks, valgrind, ASan and UBSan to attempt and find bottlenecks and places that could be optimized further
 
 profiling was done on an ubuntu 24.04 virtual machine with 2 cpus and limited memory - so truly large graphs could not be tested
+
+The testing was done on a grid of width=800 and height=600 and the max distance between two neighbors is 30
+the nodes locations on the grid are randomized so a graph with 500 nodes is most likely comprised of multiple disconnected parts
+while a graph of size 2k nodes is fully connected and the average degree is ~12
+a graph of size 1k is likely to be fully connected and has an average degree of ~6
+
 ![Benchmark Results](./docs/benchmarks.png)
 
 ## future work
@@ -67,7 +73,9 @@ there is redundancy in node's data about its neighbors
 
 2) compatibility on windows
 
-3) improving the GUI
+3) creating more ways to create and test graphs (right now its promarily via randomized grid-based graphs even that kind of graph is mostly to support the gui)
+
+4) improving the GUI
 
 ## Project status
 This is a learning project and is under devlopment (currently attempting to optimize it).
