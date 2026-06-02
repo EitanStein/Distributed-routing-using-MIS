@@ -54,7 +54,7 @@ I considered using a custom queue using a ring buffer that would mean less memor
 I used tracy, googlebenchmarks, valgrind, ASan and UBSan to attempt and find bottlenecks and places that could be optimized further
 
 profiling was done on an ubuntu 24.04 virtual machine with 2 cpus and limited memory - so truly large graphs could not be tested
-![Benchmark Results](./docs/benchmark.png)
+![Benchmark Results](./docs/benchmarks.png)
 
 ## future work
 1) further memory optimizations in nodes
