@@ -20,7 +20,7 @@ build/bin/MISDistributedRouting.exe
 default values (node size in the gui, max distance between two nodes, frame rate) can be found in `include/config.h`
 at the moment changing them will require recompliation of the program (future goal to change)
 
-### Algorithm and Complexity
+## Algorithm and Complexity
 
 each node sends a random value in the range [0,1) to its neighbors
 if its own random value is larger than its neighbors - its added to the MIS and notifies its neighbors
