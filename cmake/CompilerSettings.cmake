@@ -2,6 +2,9 @@ include_guard(GLOBAL)
 
 function(create_project_options)
     option(ENABLE_SANITIZERS "Enable Sanitizers in Debug mode" OFF)
+    option(ASAN_UBSAN "Enable Address and Undefined behaviour sanitizers" OFF)
+    option(TSAN "Enable Thread sanitizer" OFF)
+    option(MSAN "Enable Memory sanitizer" OFF)
 
     option(TRACY_ENABLE "Enable Tracy profiling" OFF)
     option(TRACY_BUILD_PROFILER "Build Tracy GUI Profiler App automatically" OFF)
@@ -44,22 +47,38 @@ function(create_project_options)
     # SANITIZER FLAGS (Only if enabled and in Debug mode)
     # ---------------------------------------------------------
     if(ENABLE_SANITIZERS)
+        if(ASAN_UBSAN)
+            # --- MSVC (Windows) Sanitizers ---
+            target_compile_options(project_options INTERFACE
+                $<$<AND:${IS_MSVC},${IS_DEBUG}>:/fsanitize=address>
+            )
+            target_link_options(project_options INTERFACE
+                $<$<AND:${IS_MSVC},${IS_DEBUG}>:/fsanitize=address>
+            )
         
-        # --- MSVC (Windows) Sanitizers ---
-        target_compile_options(project_options INTERFACE
-            $<$<AND:${IS_MSVC},${IS_DEBUG}>:/fsanitize=address>
-        )
-        target_link_options(project_options INTERFACE
-            $<$<AND:${IS_MSVC},${IS_DEBUG}>:/fsanitize=address>
-        )
 
-        # --- GCC/Clang (Linux) Sanitizers ---
-        target_compile_options(project_options INTERFACE
-            $<$<AND:${IS_POSIX},${IS_DEBUG}>:-fsanitize=address,undefined -fno-omit-frame-pointer>
-        )
-        target_link_options(project_options INTERFACE
-            $<$<AND:${IS_POSIX},${IS_DEBUG}>:-fsanitize=address,undefined>
-        )
+            # --- GCC/Clang (Linux) Sanitizers ---
+            target_compile_options(project_options INTERFACE
+                $<$<AND:${IS_POSIX},${IS_DEBUG}>:-fsanitize=address,undefined -fno-omit-frame-pointer>
+            )
+            target_link_options(project_options INTERFACE
+                $<$<AND:${IS_POSIX},${IS_DEBUG}>:-fsanitize=address,undefined>
+            )
+        elseif(TSAN)
+            target_compile_options(project_options INTERFACE
+                $<$<AND:${IS_POSIX},${IS_DEBUG}>:-fsanitize=thread>
+            )
+            target_link_options(project_options INTERFACE
+                $<$<AND:${IS_POSIX},${IS_DEBUG}>:-fsanitize=thread>
+            )
+        elseif(MSAN)
+            target_compile_options(project_options INTERFACE
+                $<$<AND:${IS_CLANG},${IS_DEBUG}>:-fsanitize=memory -fsanitize-memory-track-origins=2>
+            )
+            target_link_options(project_options INTERFACE
+                $<$<AND:${IS_CLANG},${IS_DEBUG}>:-fsanitize=memory>
+            )
+        endif()
         
     endif()
 

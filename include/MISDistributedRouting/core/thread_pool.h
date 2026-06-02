@@ -20,7 +20,7 @@ private:
     std::condition_variable_any queue_cv;
     std::queue<MessagerNode*> task_queue;
 
-    std::atomic<size_t> num_active_tasks;
+    std::atomic<size_t> num_active_tasks; // TODO needs to be atomic?
     std::condition_variable tasks_done_cv;
 
     void ThreadLoop(std::stop_token stoken);

@@ -14,7 +14,7 @@ void  ThreadPool::InitPool()
 {
     threads.clear();
     threads.reserve(thread_pool_size);
-    for([[maybe_unused]] auto i : std::views::iota(size_t{0}, thread_pool_size))
+    for([[maybe_unused]]auto _ : std::views::iota(size_t{0}, thread_pool_size))
     {
         threads.emplace_back([this](std::stop_token stoken){ 
             ThreadLoop(stoken); 
@@ -50,8 +50,10 @@ bool ThreadPool::IsTaskQueueEmpty()
 void ThreadPool::AddTask(MessagerNode* node_ptr)
 {
     // ZoneScopedN("AddTask");
-    std::unique_lock<std::mutex> lock(queue_lock);
-    task_queue.emplace(node_ptr);
+    {
+        std::unique_lock<std::mutex> lock(queue_lock);
+        task_queue.emplace(node_ptr);
+    }
     queue_cv.notify_one();
 }
 
@@ -71,6 +73,17 @@ void ThreadPool::ThreadLoop(std::stop_token stoken)
     {
         {
             std::unique_lock<std::mutex> lock(queue_lock);
+            
+            if (node_ptr != nullptr) 
+            {
+                --num_active_tasks;
+                if (task_queue.empty() && num_active_tasks == 0) 
+                {
+                    tasks_done_cv.notify_all();
+                }
+                node_ptr = nullptr;
+            }
+
             queue_cv.wait(lock, stoken, [this](){
                 return !this->task_queue.empty();
             });
@@ -83,14 +96,7 @@ void ThreadPool::ThreadLoop(std::stop_token stoken)
             task_queue.pop();
             
         }
-        node_ptr->RunPhase();
-
-        {
-            std::unique_lock<std::mutex> lock(queue_lock);
-            --num_active_tasks;
-            if(task_queue.empty() && num_active_tasks == 0)
-                tasks_done_cv.notify_all();
-        }
-
+        if(node_ptr != nullptr) [[likely]]
+            node_ptr->RunPhase();
     }
 }
