@@ -3,6 +3,7 @@
 #include "MISDistributedRouting/utils/log_macros.h"
 
 #include <ranges>
+#include <utility>
 
 
 Node::~Node() = default;
@@ -92,7 +93,7 @@ std::optional<std::pair<node_id_t, Message>> MessagerNode::ReadMsgFromInbox()
         auto [src, msg] = std::move(optional_msg.value());
         // TODO going through hoops to return the id instead of index
         // TODO check lifetime and make sure no excess construction happens
-        return std::pair<node_id_t, Message>{neighbors[src]->GetID(), std::move(msg)}; 
+        return std::optional<std::pair<node_id_t, Message>>{std::in_place, neighbors[src]->GetID(), std::move(msg)}; 
     }
     else
         return std::nullopt;

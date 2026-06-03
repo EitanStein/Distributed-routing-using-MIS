@@ -32,25 +32,27 @@ void MIS_Node::HandleMISBuildingMsg(node_id_t sender, Message msg)
 {
     if (my_MIS != nullptr)
         return;
-    if (std::holds_alternative<double>(msg.msg))
-    {
-        if (std::get<double>(msg.msg) > rand_num)
-        {
-            is_MIS = false;
+
+    std::visit([this, sender](auto&& arg){
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, double>){
+            if (arg > rand_num)
+            {
+                is_MIS = false;
+            }
         }
-    }
-    else if(std::holds_alternative<bool>(msg.msg))
-    {
-        if (std::get<bool>(msg.msg) == true)
-        {
-            my_MIS = GetNeighbor(sender);
-            MISBuildingBroadcast(Message(false));
+        else if constexpr (std::is_same_v<T, bool>){
+            if (arg == true)
+            {
+                my_MIS = GetNeighbor(sender);
+                MISBuildingBroadcast(Message(false));
+            }
+            else
+            {
+                active_MIS_building_neighbors.erase(sender);
+            }
         }
-        else
-        {
-            active_MIS_building_neighbors.erase(sender);
-        }
-    }
+    }, msg.msg);
 }
 
 void MIS_Node::HandleMsg([[maybe_unused]] node_id_t sender, Message msg)
@@ -174,8 +176,6 @@ void MIS_Node::HandlePathBuildingMessages()
 
 void MIS_Node::HandleAllInboxMessages(){
     switch(stage){
-        case INIT:
-            return;
         case COMPLETE:
             MessagerNode::HandleAllInboxMessages();
             return;
@@ -185,6 +185,8 @@ void MIS_Node::HandleAllInboxMessages(){
         case PATH_BUILDING:
             HandlePathBuildingMessages();
             return;
+        case INIT:
+            return;
         default:
             LOG_ERROR("invalid MIS node stage: {}", int(stage));
     }
@@ -192,7 +194,6 @@ void MIS_Node::HandleAllInboxMessages(){
 
 void MIS_Node::HandleSendingNewMessages(){
     switch(stage){
-        case INIT:
         case COMPLETE:
             return;
         case MIS_BUILDING:
@@ -204,6 +205,8 @@ void MIS_Node::HandleSendingNewMessages(){
             return;
         case PATH_BUILDING:
             BuildPathTableBroadacst();
+            return;
+        case INIT:
             return;
         default:
             LOG_ERROR("invalid MIS node stage: {}", int(stage));
