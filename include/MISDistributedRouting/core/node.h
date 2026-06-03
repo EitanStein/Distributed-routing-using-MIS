@@ -33,8 +33,6 @@ class MessagerNode : public Node
 protected:
     ThreadPool* thread_pool;
     Inbox inbox;
-
-    void InitInbox();
 public:
     MessagerNode(node_id_t id, ThreadPool* pool) : Node(id), thread_pool(pool) {}
     ~MessagerNode();
@@ -55,7 +53,11 @@ public:
     virtual void SendMsg(MessagerNode* dest, Message msg);
     void Broadcast(Message msg);
 
+    // TODO change RunPhase, UpdatePhase, InitInbox somehow
+    // either different names or different way to use or both
     void RunPhase();
     void UpdatePhase();
+
+    void InitInbox();
 };
 

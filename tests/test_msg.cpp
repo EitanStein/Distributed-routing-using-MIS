@@ -2,10 +2,12 @@
 
 #include <catch2/catch_all.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include "MISDistributedRouting/utils/log_macros.h"
 
 #include "MISDistributedRouting/core/message_box.h"
 
 TEST_CASE("reading from empty message_box", ""){
+    INIT_LOGGER();
     Inbox inbox;
     REQUIRE(inbox.PopMsg() == std::nullopt);
 
@@ -15,6 +17,7 @@ TEST_CASE("reading from empty message_box", ""){
 
 
 TEST_CASE("reading message box with empty read buffer", ""){
+    INIT_LOGGER();
     Inbox inbox;
     inbox.ReserveInbox(5);
 
@@ -24,6 +27,7 @@ TEST_CASE("reading message box with empty read buffer", ""){
 
 
 TEST_CASE("reading messges", ""){
+    INIT_LOGGER();
     Inbox inbox;
     inbox.ReserveInbox(5);
 
@@ -37,6 +41,7 @@ TEST_CASE("reading messges", ""){
 
 
 TEST_CASE("reading messges from the correct buffer", ""){
+    INIT_LOGGER();
     Inbox inbox;
     inbox.ReserveInbox(5);
 
