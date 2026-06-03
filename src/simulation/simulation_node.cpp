@@ -29,23 +29,6 @@ bool SimulationNode::Contains(const sf::Vector2f& point) const
     return shape.getGlobalBounds().contains(point);
 }
 
-// void SimulationNode::SendAllOutboxMessages()
-// {
-//     is_sending_msg = false;
-//     while(std::optional<std::pair<node_id_t, Message>> optional_msg = outbox.PopMsg())
-//     {
-//         auto [target, msg] = std::move(*optional_msg);
-//         MessagerNode* target_ptr = GetNeighbor(target);
-//         if(target_ptr == nullptr)
-//         {
-//             LOG_ERROR("Outbox message from {} to nonexistent neighbor {}", id, target);
-//             continue;
-//         }
-
-//         is_sending_msg = true;
-//         target_ptr->AddInboxMsg(this->id, std::move(msg));
-//     } 
-// }
 
 void SimulationNode::Draw(sf::RenderWindow& window)
 {

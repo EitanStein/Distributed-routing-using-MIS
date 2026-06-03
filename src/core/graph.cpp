@@ -82,10 +82,6 @@ bool SyncedGraph::AreMessagesPending()
     return false;
 }
 
-#include <cstdio>
-#include <iostream>
-#include <format> // TODO remove
-
 
 void SyncedGraph::RunAllNodesCycle(){
     size_t graph_size = GetGraphSize();
