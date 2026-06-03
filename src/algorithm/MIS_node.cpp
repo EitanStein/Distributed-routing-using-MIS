@@ -176,8 +176,6 @@ void MIS_Node::HandlePathBuildingMessages()
 
 void MIS_Node::HandleAllInboxMessages(){
     switch(stage){
-        case INIT:
-            return;
         case COMPLETE:
             MessagerNode::HandleAllInboxMessages();
             return;
@@ -187,6 +185,8 @@ void MIS_Node::HandleAllInboxMessages(){
         case PATH_BUILDING:
             HandlePathBuildingMessages();
             return;
+        case INIT:
+            return;
         default:
             LOG_ERROR("invalid MIS node stage: {}", int(stage));
     }
@@ -194,7 +194,6 @@ void MIS_Node::HandleAllInboxMessages(){
 
 void MIS_Node::HandleSendingNewMessages(){
     switch(stage){
-        case INIT:
         case COMPLETE:
             return;
         case MIS_BUILDING:
@@ -206,6 +205,8 @@ void MIS_Node::HandleSendingNewMessages(){
             return;
         case PATH_BUILDING:
             BuildPathTableBroadacst();
+            return;
+        case INIT:
             return;
         default:
             LOG_ERROR("invalid MIS node stage: {}", int(stage));
