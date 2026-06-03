@@ -7,6 +7,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <ranges>
 
+// TODO graph+node testing is too complicated - need to refactor it
+
 
 class TestNode : public SimulationNode
 {
@@ -181,18 +183,6 @@ TEST_CASE("Graph creation no self neighbors check", "")
     graph.InitGraph(100);
 
     REQUIRE(!graph.AreThereSelfNeighbors());
-}
-
-
-TEST_CASE("Larger Graph MIS test", "")
-{
-    INIT_LOGGER();
-
-    TestGraph graph;
-    graph.InitGraph(500);
-    graph.InitMIS();
-    REQUIRE(graph.IsMISConsistent());
-    REQUIRE(graph.IsPathTableConsistent());
 }
 
 

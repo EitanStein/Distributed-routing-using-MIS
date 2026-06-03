@@ -16,7 +16,8 @@ void Node::AddEdge(Node* other)
     id_based_neighbors_map[other->GetID()] = neighbors.size()-1;
 }
 
-std::optional<node_id_t> Node::GetNeighborIdxFromId(node_id_t id) const{
+std::optional<node_id_t> Node::GetNeighborIdxFromId(node_id_t id) const
+{
     auto target = id_based_neighbors_map.find(id);
     if(target == id_based_neighbors_map.end())
     {
@@ -29,7 +30,7 @@ std::optional<node_id_t> Node::GetNeighborIdxFromId(node_id_t id) const{
 
 Node* Node::GetNeighbor(node_id_t id) const
 {
-    auto opt_idx = GetNeighborIdxFromId(id);
+    std::optional<node_id_t> opt_idx = GetNeighborIdxFromId(id);
 
     if(opt_idx)
         return neighbors[opt_idx.value()];
