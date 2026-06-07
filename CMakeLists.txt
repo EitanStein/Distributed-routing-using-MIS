@@ -19,6 +19,7 @@ if(TRACY_ENABLE)
       tracy
       GIT_REPOSITORY https://github.com/wolfpld/tracy.git
       GIT_TAG        c556831ddc6fe26d2fce01c14c97205a9dad46d5 #0.12.2
+      FIND_PACKAGE_ARGS CONFIG
   )
   FetchContent_MakeAvailable(tracy)
 endif()
@@ -27,13 +28,15 @@ FetchContent_Declare(
     spdlog
     GIT_REPOSITORY https://github.com/gabime/spdlog.git
     GIT_TAG        486b55554f11c9cccc913e11a87085b2a91f706f #1.16.0
+    FIND_PACKAGE_ARGS CONFIG
 )
 FetchContent_MakeAvailable(spdlog)
 
 FetchContent_Declare(
     SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG        0fa201c969e48ecc253581c5841ce73f44d42f49 #3.0.2     
+    GIT_TAG        0fa201c969e48ecc253581c5841ce73f44d42f49 #3.0.2
+    FIND_PACKAGE_ARGS COMPONENTS Graphics Window CONFIG    
 )
 FetchContent_MakeAvailable(SFML)
 
@@ -43,6 +46,7 @@ FetchContent_Declare(
     Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
     GIT_TAG        6ee0826dcae55ed1e06b2c5701981221e979e1e6 #3.15.0
+    FIND_PACKAGE_ARGS CONFIG
 )
 FetchContent_MakeAvailable(Catch2)
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
@@ -55,6 +59,7 @@ if(BUILD_BENCHMARKS)
     googlebenchmark
     GIT_REPOSITORY https://github.com/google/benchmark.git
     GIT_TAG        192ef10025eb2c4cdd392bc502f0c852196baa48 #1.9.5
+    FIND_PACKAGE_ARGS CONFIG
     )
     FetchContent_MakeAvailable(googlebenchmark)
 endif()

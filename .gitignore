@@ -24,3 +24,6 @@ Makefile
 
 # benchmarking results
 results.json
+
+
+CMakeUserPresets.json
