@@ -36,6 +36,14 @@ Time: O(diam(G)) cycles
 Messages: O(m*size(MIS))
 
 ## Design choices
+#### Messages
+I considered using inheritance to represent different messages
+that way I have a base message class and different inheriting class types for each message type
+and the messages I send between nodes will use the base class pointer
+However that would result in many heap allocations for the majority of the work done during runtime
+So instead I opted to use std::variant which consists of all message types needed
+Its a bit harder to update in case newer message types need to be supported in the future, and it can suffer from casting between similar types if mishandled, but it allows all messages to live in the stack (unless they hold a std::message but thats for regular messages between nodes and not for the construction of the MIS and path)
+
 #### Node MessageBox
 Each message box has a dedicated inbox per neighbor - that way there are no races when different neighbors send messages to the same node
 It manages 2 buffers of dedicated inboxes - one for writing (recieving messages) and one for reading (reading messages)
