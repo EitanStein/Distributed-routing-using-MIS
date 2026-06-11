@@ -22,33 +22,24 @@ function(create_project_options)
     
     set(IS_POSIX $<OR:${IS_GCC},${IS_CLANG}>)
 
-    # ---------------------------------------------------------
-    # WARNING FLAGS
-    # ---------------------------------------------------------
+
     if(TRACY_ENABLE)
         target_compile_options(project_options INTERFACE
-            # Windows Warnings: Level 4 and treat as errors
             $<$<AND:${IS_MSVC}>:/W4>
             
-            # Linux Warnings: Wall, Wextra, Pedantic, and treat as errors
             $<$<AND:${IS_POSIX}>:-Wall -Wextra -Wpedantic>
         )
     else()
         target_compile_options(project_options INTERFACE
-            # Windows Warnings: Level 4 and treat as errors
             $<$<AND:${IS_MSVC}>:/W4 /WX>
             
-            # Linux Warnings: Wall, Wextra, Pedantic, and treat as errors
             $<$<AND:${IS_POSIX}>:-Wall -Wextra -Wpedantic -Werror>
         )
     endif()
 
-    # ---------------------------------------------------------
-    # SANITIZER FLAGS (Only if enabled and in Debug mode)
-    # ---------------------------------------------------------
+
     if(ENABLE_SANITIZERS)
         if(ASAN_UBSAN)
-            # --- MSVC (Windows) Sanitizers ---
             target_compile_options(project_options INTERFACE
                 $<$<AND:${IS_MSVC},${IS_DEBUG}>:/fsanitize=address>
             )
@@ -57,7 +48,6 @@ function(create_project_options)
             )
         
 
-            # --- GCC/Clang (Linux) Sanitizers ---
             target_compile_options(project_options INTERFACE
                 $<$<AND:${IS_POSIX},${IS_DEBUG}>:-fsanitize=address,undefined -fno-omit-frame-pointer>
             )
