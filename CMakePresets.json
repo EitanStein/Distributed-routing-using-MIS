@@ -22,7 +22,8 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "TRACY_ENABLE": "OFF",
-        "ENABLE_SANITIZERS": "OFF"
+        "ENABLE_SANITIZERS": "OFF",
+        "BUILD_BENCHMARKS": "ON"
       }
     },
     {
