@@ -5,8 +5,6 @@ using per_neighbor_buffer = std::vector<NeighborInbox>;
 
 NeighborInbox::NeighborInbox() : size(0), front_msg_index(0) {
     inbox.reserve(2);
-    inbox.emplace_back(0);
-    inbox.emplace_back(0);
 }
 
 void NeighborInbox::AddMsg(Message&& msg){

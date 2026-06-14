@@ -29,15 +29,16 @@ protected:
 
     double GetRandNumber(double min_val = 0, double max_val = 1.0);
 
+    void HandleMISBuildingMsg(node_id_t sender, MsgType::MISBuildingMessage&& msg);
+    void HandlePathBuildingMsg(node_id_t sender, MsgType::PathBuildingMessage&& msg);
+    void HandleRegularMessage(node_id_t sender, MsgType::RoutedMessage&& msg);
+
     void MISBuildingBroadcast(Message msg);
-    void HandleMISBuildingMsg(node_id_t sender, Message msg);
 
     void MISBroadcast();
     void BroadcastMISStatus();
-    void HandleMISBuildingMessages();
 
     void BuildPathTableBroadacst();
-    void HandlePathBuildingMessages();
 public:
     MIS_Node(node_id_t id, ThreadPool* pool);
     ~MIS_Node();
@@ -47,8 +48,7 @@ public:
     MIS_Node* GetNeighbor(node_id_t id) const override;
     node_id_t GetMyMISID() const {return my_MIS->GetID();}
 
-    void HandleMsg([[maybe_unused]] node_id_t sender, Message msg) override;
-    void HandleAllInboxMessages() override;
+    void HandleMsg(node_id_t sender, Message&& msg) override;
     void HandleSendingNewMessages() override;
 
     void AdvanceStage();

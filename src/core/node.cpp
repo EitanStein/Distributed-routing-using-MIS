@@ -57,7 +57,7 @@ void MessagerNode::InitInbox(){
     inbox.ReserveInbox(neighbors.size());
 }
 
-void MessagerNode::HandleMsg(node_id_t, Message) {}
+void MessagerNode::HandleMsg(node_id_t, Message&&) {}
 
 void MessagerNode::SendMsg(MessagerNode* dest, Message msg)
 {

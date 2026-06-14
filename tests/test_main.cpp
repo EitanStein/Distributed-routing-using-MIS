@@ -96,7 +96,7 @@ public:
     void SendMessage(node_id_t sender, node_id_t receiver, std::string msg)
     {
         auto receiver_router_id = GetNode(receiver)->GetMyMisID();
-        GetNode(sender)->HandleMsg(sender, Message(sender, receiver, receiver_router_id, msg));
+        GetNode(sender)->HandleMsg(sender, MsgType::RoutedMessage{sender, receiver, receiver_router_id, msg});
     }
 
     std::optional<std::pair<node_id_t, Message>> GetMessageFromNode(node_id_t node_id)
@@ -260,7 +260,7 @@ TEST_CASE("Check sending message1", "")
         final_msg = graph.GetMessageFromNode(4);
     }
 
-    REQUIRE(std::get<std::string>(final_msg.value().second.msg)==msg);
+    REQUIRE(std::get<MsgType::RoutedMessage>(final_msg.value().second.data).data==msg);
 }
 
 
@@ -297,7 +297,7 @@ TEST_CASE("Check sending message2", "")
         final_msg = graph.GetMessageFromNode(5);
     }
 
-    REQUIRE(std::get<std::string>(final_msg.value().second.msg)==msg);
+    REQUIRE(std::get<MsgType::RoutedMessage>(final_msg.value().second.data).data==msg);
 }
 
 
@@ -323,7 +323,7 @@ TEST_CASE("Check sending message on random graph", "")
     }
 
     if(final_msg.has_value())
-        REQUIRE(std::get<std::string>(final_msg.value().second.msg)==msg);
+        REQUIRE(std::get<MsgType::RoutedMessage>(final_msg.value().second.data).data==msg);
 }
 
 
@@ -349,5 +349,5 @@ TEST_CASE("Check sending message to self", "")
     }
 
     if(final_msg.has_value())
-        REQUIRE(std::get<std::string>(final_msg.value().second.msg)==msg);
+        REQUIRE(std::get<MsgType::RoutedMessage>(final_msg.value().second.data).data==msg);
 }
