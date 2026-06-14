@@ -21,7 +21,7 @@ TEST_CASE("reading message box with empty read buffer", ""){
     Inbox inbox;
     inbox.ReserveInbox(5);
 
-    inbox.AddMsg(1, Message{0});
+    inbox.AddMsg(1, MsgType::MISBuildingMessage{false});
     REQUIRE(inbox.PopMsg() == std::nullopt);
 }
 
@@ -31,12 +31,12 @@ TEST_CASE("reading messges", ""){
     Inbox inbox;
     inbox.ReserveInbox(5);
 
-    inbox.AddMsg(1, Message{0});
+    inbox.AddMsg(1, MsgType::MISBuildingMessage{false});
     inbox.ChangePhase();
     std::optional<std::pair<node_id_t, Message>> msg = inbox.PopMsg();
     REQUIRE(msg != std::nullopt);
     REQUIRE(msg.value().first == (node_id_t)1);
-    REQUIRE(msg.value().second.msg == Message{0}.msg);
+    REQUIRE(std::get<MsgType::MISBuildingMessage>(msg.value().second.data).MIS_data == MsgType::MISBuildingMessage{false}.MIS_data);
 }
 
 
@@ -45,20 +45,20 @@ TEST_CASE("reading messges from the correct buffer", ""){
     Inbox inbox;
     inbox.ReserveInbox(5);
 
-    inbox.AddMsg(1, Message{0});
-    inbox.AddMsg(2, Message{0});
+    inbox.AddMsg(1, MsgType::MISBuildingMessage{false});
+    inbox.AddMsg(2, MsgType::MISBuildingMessage{false});
     inbox.ChangePhase();
-    inbox.AddMsg(0, Message{0});
+    inbox.AddMsg(0, MsgType::MISBuildingMessage{false});
     
     std::optional<std::pair<node_id_t, Message>> msg = inbox.PopMsg();
     REQUIRE(msg != std::nullopt);
     REQUIRE(msg.value().first == (node_id_t)1);
-    REQUIRE(msg.value().second.msg == Message{0}.msg);
+    REQUIRE(std::get<MsgType::MISBuildingMessage>(msg.value().second.data).MIS_data == MsgType::MISBuildingMessage{false}.MIS_data);
 
     msg = inbox.PopMsg();
     REQUIRE(msg != std::nullopt);
     REQUIRE(msg.value().first == (node_id_t)2);
-    REQUIRE(msg.value().second.msg == Message{0}.msg);
+    REQUIRE(std::get<MsgType::MISBuildingMessage>(msg.value().second.data).MIS_data == MsgType::MISBuildingMessage{false}.MIS_data);
 
     REQUIRE(inbox.PopMsg() == std::nullopt);
 }

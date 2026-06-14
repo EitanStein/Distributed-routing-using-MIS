@@ -111,7 +111,7 @@ void Simulator::HandleMouseClick(const sf::Event::MouseButtonReleased* key_press
 
             std::string msg = window.GetMessage();
 
-            sender->HandleMsg(sender->GetID(), Message(sender->GetID(), recipient->GetID(), recipient->GetMyMISID(), msg));
+            sender->HandleMsg(sender->GetID(), MsgType::RoutedMessage{sender->GetID(), recipient->GetID(), recipient->GetMyMISID(), msg});
         }
         else if(window.IsHoveringMessageText(sf::Vector2f(mouse_pos)))
         {

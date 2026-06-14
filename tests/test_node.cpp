@@ -43,7 +43,7 @@ TEST_CASE("checking inbox status"){
     n1.InitInbox();
     n2.InitInbox();
 
-    n1.AddInboxMsg(1, Message{0});
+    n1.AddInboxMsg(1, MsgType::MISBuildingMessage{false});
     REQUIRE(n1.IsInboxEmpty() == true);
     REQUIRE(n2.IsInboxEmpty() == true);
 
@@ -69,7 +69,7 @@ TEST_CASE("sending messages"){
     n1.InitInbox();
     n2.InitInbox();
 
-    n2.SendMsg(&n1, Message{0});
+    n2.SendMsg(&n1, MsgType::MISBuildingMessage{false});
     REQUIRE(n1.IsInboxEmpty() == true);
     REQUIRE(n2.IsInboxEmpty() == true);
 
@@ -81,7 +81,7 @@ TEST_CASE("sending messages"){
     REQUIRE(n1.IsInboxEmpty() == true);
     REQUIRE(n2.IsInboxEmpty() == true);
 
-    n2.Broadcast(Message{0});
+    n2.Broadcast(MsgType::MISBuildingMessage{true});
     REQUIRE(n1.IsInboxEmpty() == true);
     REQUIRE(n2.IsInboxEmpty() == true);
 

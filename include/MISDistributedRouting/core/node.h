@@ -40,7 +40,7 @@ public:
     void AddEdge(Node* neighbor) override;
     MessagerNode* GetNeighbor(node_id_t id) const override;
 
-    virtual void HandleMsg(node_id_t, Message);
+    virtual void HandleMsg(node_id_t, Message&&);
     
     void AddInboxMsg(node_id_t from_id, Message msg);
     std::optional<std::pair<node_id_t, Message>> ReadMsgFromInbox();
