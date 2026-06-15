@@ -3,6 +3,8 @@
 A custom c++ synchronized distributed implementation that constructs a maximal independent set and uses it to route messages between nodes in the graph
 It uses a random algorithm described in the book Distributed Graph Algorithms For Computer Networks by K. Erciyes (Rand2_MIS in the book)
 
+This is a learning project for implementing a distributed algorithm in C++
+
 ## Installation
 ### Requirements
 - C++20-compatible compiler
