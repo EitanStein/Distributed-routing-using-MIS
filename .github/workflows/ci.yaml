@@ -44,6 +44,7 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.use_asan_and_ubsan }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.build_type }}-
+          max-size: 2G
 
       - name: Run vcpkg
         uses: lukka/run-vcpkg@b1a0dd252f06b9e25b3c022a9a03bd7a427fb6a2 #v11.6
