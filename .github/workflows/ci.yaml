@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Install Linux Dependencies
         if: runner.os == 'Linux'
@@ -38,16 +38,22 @@ jobs:
             libflac-dev
 
       - name: Setup ccache
-        uses: hendrikmuhs/ccache-action@v1.2
+        uses: hendrikmuhs/ccache-action@d62db5f07c26379fc4b4e0916f098a92573c3b03 # v1.2.23
         with:
           key: ${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.use_asan_and_ubsan }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.build_type }}-
 
+      - name: Run vcpkg
+        uses: lukka/run-vcpkg@b1a0dd252f06b9e25b3c022a9a03bd7a427fb6a2 #v11.6
+        with:
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgJsonGlob: '**/vcpkg.json'
+
       - name: Configure CMake
-        # We pass the matrix variables into CMake
         run: >
           cmake -B build -G Ninja
+          -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCMAKE_C_COMPILER_LAUNCHER=ccache
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
