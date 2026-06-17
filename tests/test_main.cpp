@@ -114,7 +114,7 @@ public:
             std::optional<std::pair<node_id_t, Message>> msg_from_inbox = GetNode(id)->ReadMsgFromInbox();
 
             GetNode(id)->HandleMsg(msg_from_inbox.value().first, std::move(msg_from_inbox.value().second));
-            GetNode(id)->ReadMsgFromInbox();
+            auto msg = GetNode(id)->ReadMsgFromInbox();
             break;
         }
 

@@ -17,7 +17,7 @@ protected:
     double unit_radius;
     std::unordered_map<node_id_t, std::unordered_map<node_id_t, sf::VertexArray>> edges; // TODO change edges - cannot get specific pointer easily atm
 
-    bool AreNodesConnected(SimulationNode*, SimulationNode*) const;
+    [[nodiscard]] bool AreNodesConnected(SimulationNode*, SimulationNode*) const;
     void ConnectNewNode();
 public:
     SimulationGraph(double graph_width=DEFAULT_GRAPH_WIDTH, double graph_height=DEFAULT_GRAPH_HEIGHT, double unit_dist=DEFAULT_UNIT_DIST, size_t thread_pool_size=DEFAULT_POOL_SIZE) : 
@@ -30,8 +30,8 @@ public:
 
     void InitGraphNodes(node_id_t num_nodes) override;
 
-    SimulationNode* GetNode(node_id_t) const override;
-    SimulationNode* GetNode(const sf::Vector2f& loc) const;
+    [[nodiscard]] SimulationNode* GetNode(node_id_t) const override;
+    [[nodiscard]] SimulationNode* GetNode(const sf::Vector2f& loc) const;
 
     void Draw(sf::RenderWindow& window);
 };

@@ -25,7 +25,7 @@ struct Button {
         text.setPosition({pos_x+10, pos_y+8});
     }
 
-    bool IsHovered(const sf::Vector2f& m) {
+    [[nodiscard]] bool IsHovered(const sf::Vector2f& m) {
         return enabled && shape.getGlobalBounds().contains(m);
     }
 
@@ -58,7 +58,7 @@ struct TextBox {
         text.setPosition({pos_x+5, pos_y+8});
     }
 
-    bool IsHovered(const sf::Vector2f& m) {
+    [[nodiscard]] bool IsHovered(const sf::Vector2f& m) {
         return enabled && box.getGlobalBounds().contains(m);
     }
 
@@ -168,10 +168,10 @@ struct SimulationWindow
     SimulationWindow(std::string_view title, uint32_t width=DEFAULT_WINDOW_WIDTH, uint32_t height=DEFAULT_WINDOW_HEIGHT);
     ~SimulationWindow() = default;
 
-    std::pair<size_t, size_t> GetGraphWindowSize() const {return {window.getSize().x - DEFAULT_CONTROL_PANEL_WIDTH, window.getSize().y};}
+    [[nodiscard]] std::pair<size_t, size_t> GetGraphWindowSize() const {return {window.getSize().x - DEFAULT_CONTROL_PANEL_WIDTH, window.getSize().y};}
 
-    const std::optional<sf::Event> GetWindowPollEvent() { return window.pollEvent(); }
-    bool IsWindowOpen() { return window.isOpen(); }
+    [[nodiscard]] const std::optional<sf::Event> GetWindowPollEvent() { return window.pollEvent(); }
+    [[nodiscard]] bool IsWindowOpen() { return window.isOpen(); }
     void Close()  {window.close(); }
 
     void ClearWindow();
@@ -179,12 +179,12 @@ struct SimulationWindow
     void DisplayWindow();
 
 
-    bool IsHoveringCreateGraphButton(sf::Vector2f pos) {return control_panel.create_graph_button.IsHovered(pos);}
-    bool IsHoveringNumNodesText(sf::Vector2f pos) {return control_panel.num_nodes_interactive_textbox.IsHovered(pos);}
-    bool IsHoveringBuildMISButton(sf::Vector2f pos) {return control_panel.build_MIS_button.IsHovered(pos);}
+    [[nodiscard]] bool IsHoveringCreateGraphButton(sf::Vector2f pos) {return control_panel.create_graph_button.IsHovered(pos);}
+    [[nodiscard]] bool IsHoveringNumNodesText(sf::Vector2f pos) {return control_panel.num_nodes_interactive_textbox.IsHovered(pos);}
+    [[nodiscard]] bool IsHoveringBuildMISButton(sf::Vector2f pos) {return control_panel.build_MIS_button.IsHovered(pos);}
 
-    bool IsHoveringSendMessageButton(sf::Vector2f pos) {return control_panel.send_message_button.IsHovered(pos);}
-    bool IsHoveringMessageText(sf::Vector2f pos) {return control_panel.message_textbox.IsHovered(pos);}
+    [[nodiscard]] bool IsHoveringSendMessageButton(sf::Vector2f pos) {return control_panel.send_message_button.IsHovered(pos);}
+    [[nodiscard]] bool IsHoveringMessageText(sf::Vector2f pos) {return control_panel.message_textbox.IsHovered(pos);}
 
     void Disable_MIS_Options() {control_panel.build_MIS_button.enabled = false;}
     void DisableSendMessageOptions() {control_panel.send_message_button.enabled = false; control_panel.message_textbox.enabled = false;}
@@ -204,7 +204,7 @@ struct SimulationWindow
 
     void UpdateInstructions(GraphStatus stage) {control_panel.intructions_textbox.text.setString(INSTRUCTIONS.at(stage));}
 
-    node_id_t GetNumNodes() const {
+    [[nodiscard]] node_id_t GetNumNodes() const {
         std::string num_nodes_text = control_panel.num_nodes_interactive_textbox.text.getString();
         node_id_t ret_val = 0;
         try
@@ -223,6 +223,6 @@ struct SimulationWindow
         return ret_val;
     }
 
-    std::string GetMessage() const {return control_panel.message_textbox.text.getString();}
+    [[nodiscard]] std::string GetMessage() const {return control_panel.message_textbox.text.getString();}
 };
 

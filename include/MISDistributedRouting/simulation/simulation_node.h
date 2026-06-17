@@ -15,8 +15,8 @@ public:
     ~SimulationNode();
 
     void SetPosition(const sf::Vector2f& point);
-    sf::Vector2f GetPosition() const;
-    bool Contains(const sf::Vector2f& point) const;
+    [[nodiscard]] sf::Vector2f GetPosition() const;
+    [[nodiscard]] bool Contains(const sf::Vector2f& point) const;
 
     void Draw(sf::RenderWindow& window);
     void HandleAllInboxMessages() override;

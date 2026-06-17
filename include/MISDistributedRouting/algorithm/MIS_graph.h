@@ -16,9 +16,9 @@ public:
     
     void AddNode() override;
 
-    MIS_Node* GetNode(node_id_t) const override;
+    [[nodiscard]] MIS_Node* GetNode(node_id_t) const override;
     bool RunCycle() override;
     void AdvanceStatus();
 
-    MIS_Node::MIS_Stage GetGraphStage() const {return stage;}
+    [[nodiscard]] MIS_Node::MIS_Stage GetGraphStage() const {return stage;}
 };

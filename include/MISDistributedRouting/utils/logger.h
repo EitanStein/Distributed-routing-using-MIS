@@ -22,7 +22,7 @@ public:
         s_logger->flush_on(spdlog::level::info);
     }
 
-    static std::shared_ptr<spdlog::logger>& Get() {return s_logger;};
+    [[nodiscard]] static std::shared_ptr<spdlog::logger>& Get() {return s_logger;};
 
 private:
     static std::shared_ptr<spdlog::logger> s_logger;

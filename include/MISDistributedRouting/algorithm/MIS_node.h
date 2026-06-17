@@ -45,8 +45,8 @@ public:
 
     void AddEdge(Node* other) override;
 
-    MIS_Node* GetNeighbor(node_id_t id) const override;
-    node_id_t GetMyMISID() const {return my_MIS->GetID();}
+    [[nodiscard]] MIS_Node* GetNeighbor(node_id_t id) const override;
+    [[nodiscard]] node_id_t GetMyMISID() const {return my_MIS->GetID();}
 
     void HandleMsg(node_id_t sender, Message&& msg) override;
     void HandleSendingNewMessages() override;

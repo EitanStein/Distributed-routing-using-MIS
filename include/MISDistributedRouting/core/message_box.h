@@ -34,6 +34,6 @@ struct Inbox{
     void AddMsg(node_id_t node_idx, Message msg);
     void ChangePhase();
     void Clear();
-    std::optional<std::pair<node_id_t, Message>> PopMsg();
-    bool IsEmpty() const;
+    [[nodiscard]] std::optional<std::pair<node_id_t, Message>> PopMsg();
+    [[nodiscard]] bool IsEmpty() const;
 };

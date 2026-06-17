@@ -19,12 +19,12 @@ public:
 
     virtual void InitGraph(size_t graph_size);
 
-    size_t GetGraphSize() const { return nodes.size(); }
+    [[nodiscard]] size_t GetGraphSize() const { return nodes.size(); }
 
     virtual void AddNode();
     virtual void AddEdge(node_id_t node1, node_id_t node2);
 
-    virtual Node* GetNode(node_id_t) const;
+    [[nodiscard]] virtual Node* GetNode(node_id_t) const;
 };
 
 
@@ -45,9 +45,10 @@ public:
     void InitGraph(size_t graph_size) override;
     void AddNode() override;
 
-    MessagerNode* GetNode(node_id_t) const override;
+    [[nodiscard]] MessagerNode* GetNode(node_id_t) const override;
 
-    virtual bool RunCycle();
+    // TODO change name or handle return type differently
+    [[nodiscard]] virtual bool RunCycle();
 
-    bool AreMessagesPending();
+    [[nodiscard]] bool AreMessagesPending();
 };

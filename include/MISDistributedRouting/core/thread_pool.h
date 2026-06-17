@@ -31,7 +31,7 @@ public:
     void InitPool();
     void StopAllThreads();
 
-    bool IsTaskQueueEmpty();
+    [[nodiscard]] bool IsTaskQueueEmpty();
     void WaitForEmptyQueue();
     
     void AddTask(MessagerNode*);
